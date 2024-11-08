@@ -6,6 +6,7 @@ from src.lightning_modules.One_Stage import *
 from src.lightning_modules.Two_Stage import *
 import os
 from src.models.WRN import *
+from src.models.CNN import *
 from torch.utils.data import DataLoader
 import json
 import torchvision.transforms as transforms
@@ -20,6 +21,20 @@ def load_WRN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
         model = WideResNet(num_classes=100, depth=28, width=10, num_input_channels=3)
     elif dataset.find("CIFAR10") != -1 or dataset.find("SVHN") != -1:
         model = WideResNet(num_classes=10, depth=28, width=10, num_input_channels=3)
+    checkpoint = torch.load(path, map_location=map_location)
+    checkpoint_cleaned = OrderedDict()
+    for key in checkpoint['state_dict'].keys():
+        new_key = ".".join(key.split(".")[1:])
+        checkpoint_cleaned[new_key] = checkpoint['state_dict'][key]
+    model.load_state_dict(checkpoint_cleaned)
+    return model
+
+# TODO: write new function load_model that has input argument model if this works
+def load_CNN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=True):
+    if dataset.find("CIFAR100") != -1:
+        model = CNN(num_classes=100)
+    elif dataset.find("CIFAR10") != -1 or dataset.find("SVHN") != -1:
+        model = CNN(num_classes=10)
     checkpoint = torch.load(path, map_location=map_location)
     checkpoint_cleaned = OrderedDict()
     for key in checkpoint['state_dict'].keys():
@@ -69,8 +84,6 @@ def load_model(name, path, device="cuda:0"):
     elif name == "WRN":
          return lt_disc_models.load_from_checkpoint(path, map_location=device).model
     elif name == "REINIT":
-        return TS_Module.load_from_checkpoint(path, map_location=device).model
-    elif name == "TSTEXP":
         return TS_Module.load_from_checkpoint(path, map_location=device).model
 
 
