@@ -81,7 +81,7 @@ def load_model(name, path, device="cuda:0"):
         return VTST_Module.load_from_checkpoint(path, map_location=device).model
     elif name.find("TST") != -1:
         return TS_Module.load_from_checkpoint(path, map_location=device).model
-    elif name == "WRN":
+    elif name == "WRN" or name == "CNN":
          return lt_disc_models.load_from_checkpoint(path, map_location=device).model
     elif name == "REINIT":
         return TS_Module.load_from_checkpoint(path, map_location=device).model
