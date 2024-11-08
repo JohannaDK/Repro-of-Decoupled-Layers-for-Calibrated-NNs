@@ -122,11 +122,11 @@ for i in range(args.seeds_per_job):
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
-    if args.model =="WRN":
+    if args.model == "WRN" or args.model == "CNN":
         lightning_module = lt_disc_models(model, num_classes)
-    elif args.model == "TST" or args.model == "REINIT" or  args.model == "TSTEXP":
+    elif args.model == "TST" or args.model == "TST_CNN" or args.model == "REINIT" or  args.model == "TSTEXP":
         lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
-    elif args.model == "VTST" or args.model == "VTSTEXP":
+    elif args.model == "VTST" or args.model == "VTST_CNN" or args.model == "VTSTEXP":
         lightning_module = VTST_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
     else:
         raise Exception("Oops, requested model does not have an accompanying lightning module!")
