@@ -8,5 +8,5 @@ python3 src/experiments/00_train_models.py \
     --seed 1 \
     --dataset CIFAR10 \
     --model_name CIFAR10_CNN_Base \
-    --batch_size 256
+    --batch_size 256 
 echo "!!Training done!!"
