@@ -1,2 +1,5 @@
 .venv
 .DS_Store
+data
+/src/**/__pycache__/
+experiment_results
