@@ -43,7 +43,7 @@ def load_CNN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False):
+def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False, num_layers=3):
     if simple_CNN:
         return CNNHead(latent_dim)
     elif num_layers == 4:
@@ -52,7 +52,7 @@ def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False)
         return WRN2810HeadMLP5(latent_dim)
     return WRN2810Head(latent_dim)
 
-def construct_EncoderVar(dataset, latent_dim, num_layers=3, simple_CNN=False):
+def construct_EncoderVar(dataset, latent_dim, num_layers=3, simple_CNN=False, num_layers=3):
     if simple_CNN:
         return CNNVarHead(latent_dim)
     elif num_layers == 4:
