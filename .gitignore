@@ -2,4 +2,5 @@
 .DS_Store
 data
 /src/**/__pycache__/
-experiment_results
+experiment_results/*
+!/experiment_results/table_metrics/
