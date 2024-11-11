@@ -164,3 +164,51 @@ class WRN2810Body(nn.Module):
         out = F.avg_pool2d(out, 8)
         out = out.view(-1, self.num_channels)
         return out
+    
+class CNNVarHead(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        #The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(84, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.logsigmoid(self.fc2(x))
+        return x
+
+class CNNHead(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        #The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(84, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+class CNNBody(nn.Module):
+    """
+    CNN model
+    Arguments:
+        num_classes (int): number of output classes.
+    """
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1 = nn.Linear(400, 120)
+        self.fc2 = nn.Linear(120, 84)
+        #self.fc3 = nn.Linear(84, num_classes) # skip last layer
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        #x = self.fc3(x) # don't use last layer, instead MLP head is added here
+        return x
