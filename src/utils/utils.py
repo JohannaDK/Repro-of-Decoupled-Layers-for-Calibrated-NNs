@@ -43,32 +43,42 @@ def load_CNN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim, num_layers=3):
-    if num_layers == 4:
+def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False):
+    if simple_CNN:
+        return CNNHead(latent_dim)
+    elif num_layers == 4:
         return WRN2810HeadMLP4(latent_dim)
     elif num_layers == 5:
         return WRN2810HeadMLP5(latent_dim)
     return WRN2810Head(latent_dim)
 
-def construct_EncoderVar(dataset, latent_dim, num_layers=3):
-    if num_layers == 4:
+def construct_EncoderVar(dataset, latent_dim, num_layers=3, simple_CNN=False):
+    if simple_CNN:
+        return CNNVarHead(latent_dim)
+    elif num_layers == 4:
         return WRN2810VarHeadMLP4(latent_dim)
     elif num_layers == 5:
         return WRN2810VarHeadMLP5(latent_dim)
     return WRN2810VarHead(latent_dim)
 
-def construct_LabelDecoder(dataset, latent_dim, num_classes):
+def construct_LabelDecoder(dataset, latent_dim, num_classes, simple_CNN=False):
     return CIFAR10SimpelLabelDecoder(latent_dim, num_classes=num_classes)
 
 def reset_CIFA10LabelDecoder(num_classes):
     return CIFAR10SimpelLabelDecoder(64*WIDERESNET_WIDTH_WANG2023, num_classes=num_classes)
 
-def construct_ClassYEncoderBody(pretrained_model=None):
+def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False):
     if pretrained_model is None:
-        return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
+        if simple_CNN:
+            return CNNBody()
+        else:
+            return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
     else:
         pretrained_dict =  pretrained_model.state_dict()
-        encoder_model = WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
+        if simple_CNN:
+            encoder_model = CNNBody()
+        else:
+            encoder_model = WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
         encoder_dict = encoder_model.state_dict()
         pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in encoder_dict}
         encoder_dict.update(pretrained_dict)
