@@ -1,0 +1,1 @@
+/experiment_results/CIFAR10_CNN/checkpoints/seed=1-epoch=580-valid_loss=0.922-model_name=CIFAR10_CNN_Base_seed1.ckpt
