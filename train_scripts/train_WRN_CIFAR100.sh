@@ -7,6 +7,6 @@ python3 src/experiments/00_train_models.py \
     --accelerator gpu \
     --seed 1 \
     --dataset CIFAR100 \
-    --model_name CIFAR100_WRN_28_10_Base \
+    --model_name WRN_CIFAR100_28_10_Base \
     --batch_size 256
 echo "!!Training done!!"
