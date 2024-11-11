@@ -7,10 +7,10 @@ python3 src/experiments/00_train_models.py \
     --accelerator gpu \
     --seed 0 \
     --dataset CIFAR10 \
-    --model_name CIFAR10_CNN_Base_TST \
+    --model_name TST_CIFAR10_CNN_Base \
     --batch_size 256 \
-    --pretrained_qyx ../experiment_results/CIFAR10_CNN/checkpoints/seed=1-epoch=03-valid_loss=1.770-model_name=CIFAR10_CNN_Base_seed1.ckpt \
+    --pretrained_qyx ./experiment_results/CIFAR10_CNN/checkpoints/seed=1-epoch=580-valid_loss=0.922-model_name=CIFAR10_CNN_Base_seed1.ckpt \
     --seeds_per_job 10 \
     --latent_dim 128 \
-    --freeze_qyz True
+    --freeze_qyx
 echo "!!Training done!!"

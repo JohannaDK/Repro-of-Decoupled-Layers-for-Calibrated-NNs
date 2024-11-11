@@ -6,23 +6,22 @@ from torch import flatten
 import torch.optim
 
 class VTST(nn.Module):
-    def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False, 
+    def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False,
                  MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, samlple_experiment=False, train_samples=1):
         super().__init__()
         self.latent_dim = latent_dim
         self.bound_qzx_var = bound_qzx_var
         self.train_samples = train_samples
-        
+
         if dataset == "CIFAR10" or separate_body:
             self.separate_body = True
         else:
             self.separate_body = False
         if dataset == "CIFAR10" or self.separate_body:
-            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx)
-        
-        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, MLP_size)
+            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN)
+        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, simple_CNN=simple_CNN, MLP_size)
         if self.bound_qzx_var:
-            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, MLP_size)
+            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, simple_CNN=simple_CNN, MLP_size)
 
         self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
@@ -85,7 +84,7 @@ class VTST(nn.Module):
         else:
             z = self.reparameterize(z_mean, z_logvar)
             pyz = self.decode(z, y)
-            
+
             if self.return_z:
                 return pyz, z_mean, z_logvar, z
             else:

@@ -46,8 +46,8 @@ for model_path in model_paths.read().splitlines():
     model_path = model_path.strip()
     model_name = model_path.split("model_name=")[1].replace(".ckpt", "")
     print(model_name.split("_"))
-    dataset = model_name.split("_")[0] # KD: original value was [1]
-    model_type = model_name.split("_")[1]# KD: original value was [0]
+    dataset = model_name.split("_")[1]
+    model_type = model_name.split("_")[0]
     if args.temperature_scale:
         model_name = "Temp-"+model_name
 
