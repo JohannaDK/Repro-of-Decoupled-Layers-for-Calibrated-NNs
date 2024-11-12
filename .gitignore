@@ -4,3 +4,5 @@ data
 /src/**/__pycache__/
 experiment_results/*
 !/experiment_results/table_metrics/
+train_scripts/output.log
+test_scripts/output.log
