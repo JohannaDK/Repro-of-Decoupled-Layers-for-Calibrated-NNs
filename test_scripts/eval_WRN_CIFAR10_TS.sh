@@ -1,3 +1,5 @@
+#!/bin/bash	
+
 cd /home/ericbanzuzi/DD2412-Final-Project/
 export PYTHONPATH=$PWD
 echo "!!Evaluating model!!"

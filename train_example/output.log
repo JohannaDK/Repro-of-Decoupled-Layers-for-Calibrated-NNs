@@ -1,64 +1,0 @@
-nohup: ignoring input
-!!Training model!!
-Downloading https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz to /home/johannakhodaverdian/DD2412-Final-Project/data/cifar-100-python.tar.gz
-  0%|          | 0/169001437 [00:00<?, ?it/s]  0%|          | 425984/169001437 [00:00<00:43, 3908607.12it/s]  4%|▍         | 7176192/169001437 [00:00<00:04, 39960815.08it/s] 11%|█         | 18448384/169001437 [00:00<00:02, 72496926.94it/s] 17%|█▋        | 28082176/169001437 [00:00<00:01, 81697065.45it/s] 23%|██▎       | 38764544/169001437 [00:00<00:01, 90641218.43it/s] 29%|██▉       | 49840128/169001437 [00:00<00:01, 97430005.65it/s] 35%|███▌      | 59637760/169001437 [00:00<00:01, 96757777.41it/s] 42%|████▏     | 70451200/169001437 [00:00<00:00, 100281143.46it/s] 48%|████▊     | 80510976/169001437 [00:00<00:00, 98685325.20it/s]  53%|█████▎    | 90406912/169001437 [00:01<00:00, 79227387.73it/s] 59%|█████▊    | 98959360/169001437 [00:01<00:00, 71937854.94it/s] 63%|██████▎   | 106659840/169001437 [00:01<00:00, 67172029.45it/s] 68%|██████▊   | 114130944/169001437 [00:01<00:00, 68896069.98it/s] 72%|███████▏  | 121307136/169001437 [00:01<00:00, 61721402.58it/s] 76%|███████▋  | 128942080/169001437 [00:01<00:00, 65284506.23it/s] 81%|████████  | 136347648/169001437 [00:01<00:00, 67454923.73it/s] 85%|████████▍ | 143327232/169001437 [00:01<00:00, 62079277.89it/s] 89%|████████▉ | 150339584/169001437 [00:02<00:00, 64153814.49it/s] 93%|█████████▎| 156958720/169001437 [00:02<00:00, 58808725.81it/s] 97%|█████████▋| 163348480/169001437 [00:02<00:00, 59956561.87it/s]100%|██████████| 169001437/169001437 [00:02<00:00, 70942165.28it/s]
-Global seed set to 1
-wandb: Currently logged in as: johannadciofalo (johannadciofalo-kth-royal-institute-of-technology). Use `wandb login --relogin` to force relogin
-wandb: wandb version 0.18.6 is available!  To upgrade, please run:
-wandb:  $ pip install wandb --upgrade
-wandb: Tracking run with wandb version 0.15.10
-wandb: Run data is saved locally in ./experiment_results/CIFAR100_WRN/wandb/run-20241108_125030-am36l2en
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run CIFAR100_WRN_28_10_Base_seed1
-wandb: ⭐️ View project at https://wandb.ai/johannadciofalo-kth-royal-institute-of-technology/TST_CIFAR100_WRN
-wandb: 🚀 View run at https://wandb.ai/johannadciofalo-kth-royal-institute-of-technology/TST_CIFAR100_WRN/runs/am36l2en
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-/opt/conda/lib/python3.10/site-packages/lightning/pytorch/utilities/parsing.py:197: UserWarning: Attribute 'model' is an instance of `nn.Module` and is already saved during checkpointing. It is recommended to ignore them using `self.save_hyperparameters(ignore=['model'])`.
-  rank_zero_warn(
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-
-  | Name      | Type               | Params
--------------------------------------------------
-0 | model     | WideResNet         | 36.5 M
-1 | train_acc | MulticlassAccuracy | 0     
-2 | valid_acc | MulticlassAccuracy | 0     
--------------------------------------------------
-36.5 M    Trainable params
-0         Non-trainable params
-36.5 M    Total params
-146.148   Total estimated model params size (MB)
-wandb: ERROR Error while calling W&B API: context deadline exceeded (<Response [500]>)
-`Trainer.fit` stopped: `max_epochs=600` reached.
-wandb: Waiting for W&B process to finish... (success).
-wandb: - 0.013 MB of 0.036 MB uploaded (0.000 MB deduped)wandb: \ 0.013 MB of 0.036 MB uploaded (0.000 MB deduped)wandb: 
-wandb: Run history:
-wandb:               epoch ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
-wandb:     train_acc_epoch ▁▄▇█████████████████████████████████████
-wandb:      train_accuracy ▁▅▇████▇████████████████████████████████
-wandb:          train_loss █▄▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
-wandb: trainer/global_step ▁▁▁▁▂▁▁▁▂▁▁▃▁▁▁▄▁▁▁▅▁▁▁▅▁▁▆▆▁▁▇▁▁▁▇▁▁▁█▁
-wandb:     valid_acc_epoch ▁▂▂▄▅▅▅▅▆▆▆▆▇▇▆▆▇▇▇▇▆▇▆▇▇▇▇▇▇▇▇▇█▇▇▇▇█▇█
-wandb:      valid_accuracy ▁▃▃▅▄▆▄▆▅▆▅▆▅▇▆▇▆▇▇▆▇▇▇▇▇▆█▇█▆▆▆▇▇▆▇▇▇█▇
-wandb:          valid_loss ▄▃▆▅▆▄▆▃▆▄▆▄█▃▅▅▄▅▄▄▄▆▄▆▆▇▁▇▃▇▄█▅▄▇▄▅▄▄▄
-wandb:    valid_loss_epoch ▂▁█▆▆█▆▆▄▃▄▄▁▄▅▅▃▄▃▃▆▅▆▅▃▄▄▄▄▄▄▅▄▅▅▅▅▃▇▂
-wandb: 
-wandb: Run summary:
-wandb:               epoch 599
-wandb:     train_acc_epoch 0.99937
-wandb:      train_accuracy 1.0
-wandb:          train_loss 3e-05
-wandb: trainer/global_step 111599
-wandb:     valid_acc_epoch 0.7124
-wandb:      valid_accuracy 0.69898
-wandb:          valid_loss 2.12642
-wandb:    valid_loss_epoch 2.08816
-wandb: 
-wandb: 🚀 View run CIFAR100_WRN_28_10_Base_seed1 at: https://wandb.ai/johannadciofalo-kth-royal-institute-of-technology/TST_CIFAR100_WRN/runs/am36l2en
-wandb: ️⚡ View job at https://wandb.ai/johannadciofalo-kth-royal-institute-of-technology/TST_CIFAR100_WRN/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjQ5MzMxMDIzMw==/version_details/v0
-wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./experiment_results/CIFAR100_WRN/wandb/run-20241108_125030-am36l2en/logs
-Extracting /home/johannakhodaverdian/DD2412-Final-Project/data/cifar-100-python.tar.gz to /home/johannakhodaverdian/DD2412-Final-Project/data/
-!!Training done!!

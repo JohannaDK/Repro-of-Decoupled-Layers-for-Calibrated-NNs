@@ -1,0 +1,86 @@
+{
+    "Train nll": {
+        "average": 0.06548960751261977,
+        "std_dev": 0.0012960942268322659
+    },
+    "clean_accuracy": {
+        "average": 0.9243599951267243,
+        "std_dev": 0.000525745456562296
+    },
+    "ECE": {
+        "average": 1.3778611179441214,
+        "std_dev": 0.3170407499046503
+    },
+    "MCE": {
+        "average": 21.25912144780159,
+        "std_dev": 20.364146234211653
+    },
+    "nll": {
+        "average": 0.25785508170849025,
+        "std_dev": 0.005425183861799541
+    },
+    "brier": {
+        "average": 0.011403055033155942,
+        "std_dev": 0.0001136106038737624
+    },
+    "SHIFT ECE": {
+        "average": 9.410607516765594,
+        "std_dev": 0.9503398617624018
+    },
+    "SHIFT MCE": {
+        "average": 20.330387949943542,
+        "std_dev": 2.0724817197631475
+    },
+    "SHIFT ACCURACY": {
+        "average": 0.7586821615695953,
+        "std_dev": 0.0007299864873009638
+    },
+    "SHIFT Intensity: 0_ECE": {
+        "average": 3.7479766286336464,
+        "std_dev": 0.5647395726413339
+    },
+    "SHIFT Intensity: 0_MCE": {
+        "average": 18.266210819666206,
+        "std_dev": 2.8663295458981137
+    },
+    "SHIFT Intensity: 1_ECE": {
+        "average": 5.0358646681818815,
+        "std_dev": 0.7357537749634943
+    },
+    "SHIFT Intensity: 1_MCE": {
+        "average": 20.000141182771095,
+        "std_dev": 5.076641190886365
+    },
+    "SHIFT Intensity: 2_ECE": {
+        "average": 7.0025000269882955,
+        "std_dev": 0.8741509587014544
+    },
+    "SHIFT Intensity: 2_MCE": {
+        "average": 24.61110280110286,
+        "std_dev": 4.082727994961163
+    },
+    "SHIFT Intensity: 3_ECE": {
+        "average": 11.598899147043435,
+        "std_dev": 1.0754341925924575
+    },
+    "SHIFT Intensity: 3_MCE": {
+        "average": 26.962724499977554,
+        "std_dev": 4.03608942236315
+    },
+    "SHIFT Intensity: 4_ECE": {
+        "average": 19.788950157280148,
+        "std_dev": 1.310206005963196
+    },
+    "SHIFT Intensity: 4_MCE": {
+        "average": 34.70118695726761,
+        "std_dev": 2.4974021581900816
+    },
+    "OOD AUROC": {
+        "average": 0.8509557564109679,
+        "std_dev": 0.00933261699602092
+    },
+    "OOD FPR95": {
+        "average": 0.7015291962699822,
+        "std_dev": 0.005958576850573106
+    }
+}
