@@ -141,7 +141,7 @@ if num_models > 1:
     for metric, values in metrics_data.items():
         metrics_summary[metric] = {
             "average": np.mean(values),
-            "std_dev": np.std(values)
+            "SE": np.std(values)/np.sqrt(num_models)
         }
 
 

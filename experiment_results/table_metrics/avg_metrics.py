@@ -2,8 +2,8 @@ import json
 import numpy as np
 
 # Set paths
-input_files = ['WRN_CIFAR10_TS.txt', 'WRN_CIFAR10.txt']
-output_file = "metrics_summary.txt"
+input_files = ['WRN_CIFAR10_TST.txt']
+output_file = "metrics_summary_example.txt"
 
 
 metrics_data = {}
@@ -31,7 +31,7 @@ for metric, values in metrics_data.items():
     print(metric, values)
     metrics_summary[metric] = {
         "average": np.mean(values),
-        "std_dev": np.std(values)
+        "SE": np.std(values)/np.sqrt(10)
     }
 
 
