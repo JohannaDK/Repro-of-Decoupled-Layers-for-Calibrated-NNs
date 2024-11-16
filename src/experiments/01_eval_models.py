@@ -41,6 +41,7 @@ if os.path.isfile('./experiment_results/table_metrics/'+args.save_file_name):
 else:
     results = {}
 
+num_models = 0
 for model_path in model_paths.read().splitlines():
     model_path = model_path.strip()
     model_name = model_path.split("model_name=")[1].replace(".ckpt", "")
@@ -109,3 +110,43 @@ for model_path in model_paths.read().splitlines():
         results[model_name]['OOD FPR95'] = fpr_at_95_tpr_calc
     with open('./experiment_results/table_metrics/'+args.save_file_name, 'w') as fp:
         json.dump(results, fp)
+
+    num_models += 1
+
+
+if num_models > 1:
+    output_file = args.save_file_name.replace('.', '_summary.')
+    model_results = open('./experiment_results/table_metrics/'+args.save_file_name, 'r')
+
+    metrics_data = {}
+    for line_data in model_results.read().splitlines():
+        data = json.loads(line_data)
+        
+        # Loop over each entry in the JSON structure
+        for key, metrics in data.items():
+            for metric, value in metrics.items():
+                # If the value is a dictionary (for nested metrics like "SHIFT Intensity")
+                if isinstance(value, dict):
+                    for sub_metric, sub_value in value.items():
+                        full_metric = f"{metric}_{sub_metric}"
+                        metrics_data.setdefault(full_metric, []).append(sub_value)
+                elif isinstance(value, list):
+                    # If the metric is a list (like "OOD AUROC"), compute the average of the list
+                    metrics_data.setdefault(metric, []).append(np.mean(value))
+                else:
+                    metrics_data.setdefault(metric, []).append(value)
+
+    # Compute mean and standard deviation for each metric
+    metrics_summary = {}
+    for metric, values in metrics_data.items():
+        metrics_summary[metric] = {
+            "average": np.mean(values),
+            "SE": np.std(values)/np.sqrt(num_models)
+        }
+
+
+    with open('./experiment_results/table_metrics/'+output_file, 'w') as output:
+        json.dump(metrics_summary, output, indent=4)
+
+    print(f"Metrics summary saved to {'./experiment_results/table_metrics/'+output_file}")
+    
