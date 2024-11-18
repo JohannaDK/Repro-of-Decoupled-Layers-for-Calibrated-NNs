@@ -7,11 +7,13 @@ from src.lightning_modules.Two_Stage import *
 import os
 from src.models.WRN import *
 from src.models.CNN import *
+from src.models.ViT import *
 from torch.utils.data import DataLoader
 import json
 import torchvision.transforms as transforms
 import torch.utils.data as data
 from torchvision.datasets import MNIST, FashionMNIST, CIFAR10, SVHN, CIFAR100
+from data.tinyimagenet import *
 from src.models.TemperatureScaler import *
 
 EVAL_PATH = "./experiment_results/robustness_evaluations/"
@@ -43,7 +45,20 @@ def load_CNN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False, num_layers=3):
+def load_VIT_model(path, model_name_or_path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=True):
+    if dataset.find("TINYIMAGENET") != -1:
+        model = ViT(dataset, model_name_or_path)
+    elif dataset.find("CIFAR10") != -1:
+        model = ViT(dataset, model_name_or_path)
+    checkpoint = torch.load(path, map_location=map_location)
+    checkpoint_cleaned = OrderedDict()
+    for key in checkpoint['state_dict'].keys():
+        new_key = ".".join(key.split(".")[1:])
+        checkpoint_cleaned[new_key] = checkpoint['state_dict'][key]
+    model.load_state_dict(checkpoint_cleaned)
+    return model
+
+def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3):
     if simple_CNN:
         return CNNHead(latent_dim)
     elif num_layers == 4:
@@ -52,7 +67,7 @@ def construct_ClassYEncoder(dataset, latent_dim, num_layers=3, simple_CNN=False,
         return WRN2810HeadMLP5(latent_dim)
     return WRN2810Head(latent_dim)
 
-def construct_EncoderVar(dataset, latent_dim, num_layers=3, simple_CNN=False, num_layers=3):
+def construct_EncoderVar(dataset, latent_dim, simple_CNN=False, num_layers=3):
     if simple_CNN:
         return CNNVarHead(latent_dim)
     elif num_layers == 4:

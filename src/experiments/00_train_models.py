@@ -1,4 +1,5 @@
 from torchvision.datasets import MNIST, FashionMNIST, CIFAR10, SVHN, CIFAR100
+from data.tinyimagenet import *
 import torch
 import os
 from torchvision.transforms import ToTensor
@@ -55,6 +56,10 @@ elif args.dataset == "SVHN":
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465),  (0.2023, 0.1994, 0.2010))])
     train_dataset = SVHN(os.getcwd()+"/data/", download=True, transform=transform, split="train")
     num_classes = 10 
+elif args.dataset == "TINYIMAGENET":
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+    train_dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="train")
+    num_classes = 200
 else:
     raise Exception("Oops, requested dataset does not exist!")
 
@@ -119,6 +124,16 @@ for i in range(args.seeds_per_job):
         model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, MLP_size=args.mlp_size)
     elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="VTSTEXP" and args.pretrained_qyx is not None:
         model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, train_samples=args.train_samples, MLP_size=args.mlp_size)
+    elif args.model=="VIT" and (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10"):
+        model = ViT(dataset=args.dataset, model_name_or_path='google/vit-base-patch16-224-in21k')
+    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is not None:
+    #    model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_VIT_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, simple_CNN=True)
+    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is None:
+    #    model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=None, separate_body=True, simple_CNN=True)
+    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is not None:
+    #    model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_VIT_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, simple_CNN=True)
+    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is None:
+    #    model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=None, separate_body=True, simple_CNN=True)
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
