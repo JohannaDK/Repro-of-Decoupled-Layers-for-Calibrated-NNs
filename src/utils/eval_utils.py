@@ -9,6 +9,7 @@ from ood_metrics import fpr_at_95_tpr, auroc
 import torch.nn as nn
 import torch
 from src.utils.metrics import *
+from data.tinyimagenet import *
 
 SVHN_ROTATIONS = [10., 45., 90., 135., 180.]
 CORRUPTIONS = [
