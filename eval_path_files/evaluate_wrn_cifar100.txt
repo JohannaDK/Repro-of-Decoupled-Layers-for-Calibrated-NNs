@@ -1,1 +1,1 @@
-experiment_results/CIFAR100_WRN/checkpoints/seed=1-epoch=18-valid_loss=1.939-model_name=WRN_CIFAR100_28_10_Base_seed1.ckpt
+experiment_results/table_metrics/CIFAR100_WRN/checkpoints/seed=1-epoch=18-valid_loss=1.939-model_name=WRN_CIFAR100_28_10_Base_seed1.ckpt
