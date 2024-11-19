@@ -11,7 +11,7 @@ python3 src/experiments/00_train_models.py \
     --accelerator gpu \
     --latent_dim 128 \
     --seed 0 \
-    --pretrained_qyx experiment_results/CIFAR100_WRN/checkpoints/seed=1-epoch=18-valid_loss=1.939-model_name=WRN_CIFAR100_28_10_Base_seed1.ckpt \
+    --pretrained_qyx experiment_results/table_metrics/CIFAR100_WRN/checkpoints/seed=1-epoch=18-valid_loss=1.939-model_name=WRN_CIFAR100_28_10_Base_seed1.ckpt \
     --dataset CIFAR100 \
     --seeds_per_job 10
 echo "!!Training done!!"
