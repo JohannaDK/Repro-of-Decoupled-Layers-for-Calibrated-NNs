@@ -3,7 +3,7 @@ export PYTHONPATH=$PWD
 echo "!!Training model!!"
 python3 src/experiments/00_train_models.py \
     --model VIT \
-    --epochs 2 \
+    --epochs 5 \
     --accelerator gpu \
     --seed 1 \
     --dataset TINYIMAGENET \
