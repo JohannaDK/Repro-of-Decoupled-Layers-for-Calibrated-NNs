@@ -6,10 +6,12 @@ import math
 from typing import Tuple, Union
 from src.models.ResBlock import *
 from src.models.WRN import _BlockGroup
+
 WIDERESNET_WIDTH_WANG2023=10
 WIDERESNET_WIDTH_MNIST=4
 CIFAR10_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR10_STD = (0.2471, 0.2435, 0.2616)
+
 
 class WRN2810VarHead(nn.Module):
     def __init__(self, latent_dim: int = 128):
@@ -23,6 +25,39 @@ class WRN2810VarHead(nn.Module):
         x = F.logsigmoid(self.fc2(x))
         return x
 
+
+class WRN2810VarHeadMLP4(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        # The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*6)
+        self.fc2 = nn.Linear(latent_dim*6, latent_dim*3)
+        self.fc3 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.logsigmoid(self.fc3(x))
+        return x
+
+
+class WRN2810VarHeadMLP5(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        # The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*9)
+        self.fc2 = nn.Linear(latent_dim*9, latent_dim*6)
+        self.fc3 = nn.Linear(latent_dim*6, latent_dim*3)
+        self.fc4 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.logsigmoid(self.fc4(x))
+        return x
+
+
 class WRN2810Head(nn.Module):
     def __init__(self, latent_dim: int = 128):
         super().__init__()
@@ -34,6 +69,39 @@ class WRN2810Head(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
+
+class WRN2810HeadMLP4(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        # The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*6)
+        self.fc2 = nn.Linear(latent_dim*6, latent_dim*3)
+        self.fc3 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+
+class WRN2810HeadMLP5(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        # The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*9)
+        self.fc2 = nn.Linear(latent_dim*9, latent_dim*6)
+        self.fc3 = nn.Linear(latent_dim*6, latent_dim*3)
+        self.fc4 = nn.Linear(latent_dim*3, latent_dim)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
+        return x
+
+
 
 class WRN2810Body(nn.Module):
     """

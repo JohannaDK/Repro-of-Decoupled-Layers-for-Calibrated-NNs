@@ -6,10 +6,12 @@ from torch import flatten
 import torch.optim
 
 class VTST(nn.Module):
-    def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False, paper=None, simple_CNN=False, ViT_experiment=False):
+    def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False, 
+                 MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, samlple_experiment=False, train_samples=1):
         super().__init__()
         self.latent_dim = latent_dim
         self.bound_qzx_var = bound_qzx_var
+        self.train_samples = train_samples
         
         if dataset == "CIFAR10" or separate_body:
             self.separate_body = True
@@ -66,9 +68,8 @@ class VTST(nn.Module):
             z_mean, z_logvar = self.encode_fixed_var(x, y)
         else:
             z_mean, z_logvar = self.encode(x, y)
-#        if not self.training:
-#            z = z_mean
-#        else:
+
+
         z = self.reparameterize(z_mean, z_logvar)
         pyz = self.decode(z, y)
 
