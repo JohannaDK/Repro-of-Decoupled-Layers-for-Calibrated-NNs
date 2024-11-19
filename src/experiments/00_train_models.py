@@ -57,7 +57,7 @@ elif args.dataset == "SVHN":
     train_dataset = SVHN(os.getcwd()+"/data/", download=True, transform=transform, split="train")
     num_classes = 10 
 elif args.dataset == "TINYIMAGENET":
-    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BICUBIC), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
     train_dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="train")
     num_classes = 200
 else:
@@ -137,7 +137,7 @@ for i in range(args.seeds_per_job):
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
-    if args.model == "WRN" or args.model == "CNN":
+    if args.model =="WRN" or args.model == "CNN" or args.model == "VIT":
         lightning_module = lt_disc_models(model, num_classes)
     elif args.model == "TST" or args.model == "TST_CNN" or args.model == "REINIT" or  args.model == "TSTEXP":
         lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
