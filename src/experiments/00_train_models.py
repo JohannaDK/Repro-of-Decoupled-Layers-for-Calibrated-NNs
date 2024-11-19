@@ -33,6 +33,9 @@ parser.add_argument("--freeze_qyx", action=argparse.BooleanOptionalAction, defau
 parser.add_argument("--model_name", type=str, default="Unknown")
 parser.add_argument("--simple_decoder", action=argparse.BooleanOptionalAction, default=False)
 parser.add_argument("--fix_varq", action=argparse.BooleanOptionalAction, default=False)
+parser.add_argument("--mlp_size", type=int, default=3)
+parser.add_argument("--train_samples", type=int, default=1)
+
 if torch.cuda.is_available():
     parser.add_argument("--accelerator", type=str, default="gpu")
 else:
@@ -99,14 +102,20 @@ for i in range(args.seeds_per_job):
         model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True)
     elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="VTST" and args.pretrained_qyx is None:
         model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=None, separate_body=True)
+    elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="REINIT" and args.pretrained_qyx is not None:
+        model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, reinit_experiment=True)
+    elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="TSTEXP" and args.pretrained_qyx is not None:
+        model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, MLP_size=args.mlp_size)
+    elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="VTSTEXP" and args.pretrained_qyx is not None:
+        model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, train_samples=args.train_samples, MLP_size=args.mlp_size)
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
     if args.model =="WRN":
         lightning_module = lt_disc_models(model, num_classes)
-    elif args.model == "TST":
+    elif args.model == "TST" or args.model == "REINIT" or  args.model == "TSTEXP":
         lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
-    elif args.model == "VTST":
+    elif args.model == "VTST" or args.model == "VTSTEXP":
         lightning_module = VTST_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
     else:
         raise Exception("Oops, requested model does not have an accompanying lightning module!")

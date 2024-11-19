@@ -28,14 +28,25 @@ def load_WRN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim):
+def construct_ClassYEncoder(dataset, latent_dim, num_layers=3):
+    if num_layers == 4:
+        return WRN2810HeadMLP4(latent_dim)
+    elif num_layers == 5:
+        return WRN2810HeadMLP5(latent_dim)
     return WRN2810Head(latent_dim)
 
-def construct_EncoderVar(dataset, latent_dim):
+def construct_EncoderVar(dataset, latent_dim, num_layers=3):
+    if num_layers == 4:
+        return WRN2810HeadMLP4(latent_dim)
+    elif num_layers == 5:
+        return WRN2810HeadMLP5(latent_dim)
     return WRN2810VarHead(latent_dim)
 
 def construct_LabelDecoder(dataset, latent_dim, num_classes):
     return CIFAR10SimpelLabelDecoder(latent_dim, num_classes=num_classes)
+
+def reset_CIFA10LabelDecoder(num_classes):
+    return CIFAR10SimpelLabelDecoder(64*WIDERESNET_WIDTH_WANG2023, num_classes=num_classes)
 
 def construct_ClassYEncoderBody(pretrained_model=None):
     if pretrained_model is None:
