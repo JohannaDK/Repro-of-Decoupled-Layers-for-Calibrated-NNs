@@ -1,0 +1,1 @@
+/experiment_results/TINYIMAGENET_VIT/checkpoints/seed=1-epoch=01-valid_loss=0.703-model_name=VIT_TINYIMAGENET_Base_seed1.ckpt

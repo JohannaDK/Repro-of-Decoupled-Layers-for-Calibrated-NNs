@@ -109,6 +109,15 @@ def get_dataset(dataset, train=False):
         input_shape=[1, 32, 32]
         n_samples=10000
         num_classes=100
+    elif dataset == "TINYIMAGENET":
+        transform = transforms.Compose([transforms.ToTensor(), transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BICUBIC), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+        if train==True:
+            dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="train")
+        else:
+            dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="val")
+        input_shape=[1, 224, 224]
+        n_samples=100000
+        num_classes=200
     return dataset, num_classes, n_samples, input_shape
 
 def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
@@ -121,6 +130,13 @@ def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
     elif dataset == "CIFAR100":
         shift_dataset, num_classes, _, _ = get_dataset(dataset)
         shift_dataloader = DataLoader(shift_dataset, batch_size=batch_size)
+    elif dataset == "TINYIMAGENET":
+        ece_overall_calc = torch.tensor(0.0)  # or 0.0
+        mce_overall_calc = torch.tensor(0.0)  # or 0.0
+        acc = torch.tensor(0.0)  # or 0.0
+        corruption_ece_dict = {i: 0.0 for i in range(5)}
+        corruption_mce_dict = {i: 0.0 for i in range(5)}
+        return ece_overall_calc, mce_overall_calc, acc, corruption_ece_dict, corruption_mce_dict
 
     ece_overall = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='l1')
     mce_overall = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='max')
@@ -237,6 +253,8 @@ def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
     return ece_overall_calc, mce_overall_calc, acc, corruption_ece_dict, corruption_mce_dict
 
 def eval_ood_data(model, dataset, batch_size, device, OOD_y_preds_logits, OOD_labels, num_samples=1):
+    if dataset == "TINYIMAGENET":
+        return 0, 0
     ood_dataloaders = get_ood_datasets(dataset, batch_size)
     with torch.no_grad():
         for i, ood_test_dataloader in enumerate(ood_dataloaders):
