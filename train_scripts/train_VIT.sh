@@ -8,5 +8,5 @@ python3 src/experiments/00_train_models.py \
     --seed 1 \
     --dataset TINYIMAGENET \
     --model_name TINYIMAGENET_VIT_Base \
-    --batch_size 256 
+    --batch_size 64 
 echo "!!Training done!!"

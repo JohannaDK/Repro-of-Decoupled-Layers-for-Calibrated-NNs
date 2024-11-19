@@ -4,7 +4,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import ViTForImageClassification
+from transformers import ViTForImageClassification, ViTImageProcessor
 from data.tinyimagenet import *
 
 def get_tinyimagenet_labels_from_dataset(dataset_root):
@@ -35,7 +35,7 @@ class ViT(nn.Module):
     def __init__(self, dataset, model_name_or_path):
         super().__init__()
         if dataset == "CIFAR10":
-            labels = labels = [
+            labels = [
                 "airplane", "automobile", "bird", "cat", "deer",
                 "dog", "frog", "horse", "ship", "truck"
             ]
@@ -43,6 +43,8 @@ class ViT(nn.Module):
             labels = get_tinyimagenet_labels_from_dataset(os.getcwd()+"/data/")
         else: 
              raise Exception("Oops, this dataset cannot be combined with a ViT!")
+        
+        self.processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
         self.vit = ViTForImageClassification.from_pretrained(
                         model_name_or_path,
@@ -52,7 +54,12 @@ class ViT(nn.Module):
                     )
 
     def forward(self, x):
-        return self.vit(x)
+        #device = self.vit.device
+        #x = x.to(device)
+        #print(device)
+        #x = self.processor(images=x, return_tensors="pt")["pixel_values"]
+        #print(x.device)
+        return self.vit(x).logits
 
 
 # # change size of images so that they match the patch size

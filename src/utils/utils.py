@@ -106,7 +106,7 @@ def load_model(name, path, device="cuda:0"):
         return VTST_Module.load_from_checkpoint(path, map_location=device).model
     elif name.find("TST") != -1:
         return TS_Module.load_from_checkpoint(path, map_location=device).model
-    elif name == "WRN" or name == "CNN":
+    elif name == "WRN" or name == "CNN" or name == "VIT":
          return lt_disc_models.load_from_checkpoint(path, map_location=device).model
     elif name == "REINIT":
         return TS_Module.load_from_checkpoint(path, map_location=device).model
@@ -131,6 +131,10 @@ def get_valid_loader(dataset, batch_size):
         transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465),  (0.2023, 0.1994, 0.2010))])
         train_dataset = SVHN(os.getcwd()+"/data/", download=True, transform=transform, split="train")
         num_classes = 10 
+    elif dataset == "TINYIMAGENET":
+        transform = transforms.Compose([transforms.ToTensor(), transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BICUBIC), transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+        train_dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="train")
+        num_classes = 200
     if dataset == "CIFAR100":
         valid_proportion = 0.95
     else:
