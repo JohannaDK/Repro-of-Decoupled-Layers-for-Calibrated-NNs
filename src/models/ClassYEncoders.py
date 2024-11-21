@@ -6,6 +6,8 @@ import math
 from typing import Tuple, Union
 from src.models.ResBlock import *
 from src.models.WRN import _BlockGroup
+from transformers import ViTForImageClassification, ViTImageProcessor, ViTModel
+from data.tinyimagenet import *
 
 WIDERESNET_WIDTH_WANG2023=10
 WIDERESNET_WIDTH_MNIST=4
@@ -33,7 +35,7 @@ class WRN2810VarHeadMLP4(nn.Module):
         self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*6)
         self.fc2 = nn.Linear(latent_dim*6, latent_dim*3)
         self.fc3 = nn.Linear(latent_dim*3, latent_dim)
-    
+
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -49,7 +51,7 @@ class WRN2810VarHeadMLP5(nn.Module):
         self.fc2 = nn.Linear(latent_dim*9, latent_dim*6)
         self.fc3 = nn.Linear(latent_dim*6, latent_dim*3)
         self.fc4 = nn.Linear(latent_dim*3, latent_dim)
-    
+
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -77,7 +79,7 @@ class WRN2810HeadMLP4(nn.Module):
         self.fc1 = nn.Linear(64*WIDERESNET_WIDTH_WANG2023, latent_dim*6)
         self.fc2 = nn.Linear(latent_dim*6, latent_dim*3)
         self.fc3 = nn.Linear(latent_dim*3, latent_dim)
-    
+
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -93,7 +95,7 @@ class WRN2810HeadMLP5(nn.Module):
         self.fc2 = nn.Linear(latent_dim*9, latent_dim*6)
         self.fc3 = nn.Linear(latent_dim*6, latent_dim*3)
         self.fc4 = nn.Linear(latent_dim*3, latent_dim)
-    
+
     def forward(self, x):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -212,3 +214,74 @@ class CNNBody(nn.Module):
         x = F.relu(self.fc2(x))
         #x = self.fc3(x) # don't use last layer, instead MLP head is added here
         return x
+
+
+class ViTVarHead(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        #The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(768, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.logsigmoid(self.fc2(x))
+        return x
+
+class ViTHead(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        #The input to the head is the output of the body which is 64*width (where width is the width of the ResNet).
+        self.fc1 = nn.Linear(768, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+class ViTBody(nn.Module):
+    """
+    ViT model
+    Arguments:
+        dataset (str): name of the dataset to be used.
+        model_name_or_path (str): pretrained weights to be used
+    """
+    def __init__(self, dataset, model_name_or_path):
+        super().__init__()
+        if dataset == "CIFAR10":
+            labels = [
+                "airplane", "automobile", "bird", "cat", "deer",
+                "dog", "frog", "horse", "ship", "truck"
+            ]
+        elif dataset == "TINYIMAGENET":
+            labels = get_tinyimagenet_labels_from_dataset(os.getcwd()+"/data/")
+        else:
+             raise Exception("Oops, this dataset cannot be combined with a ViT!")
+
+        self.vit = ViTModel.from_pretrained(
+                        model_name_or_path,
+                        num_labels=len(labels),
+                        id2label={str(i): c for i, c in enumerate(labels)},
+                        label2id={c: str(i) for i, c in enumerate(labels)}
+                    )
+
+    def forward(self, x):
+        return self.vit(x).pooler_output
+
+def get_tinyimagenet_labels_from_dataset(dataset_root):
+    """
+    Extract labels for Tiny ImageNet dataset using the TinyImageNet class.
+
+    Args:
+        dataset_root (str): Path to the Tiny ImageNet root directory.
+
+    Returns:
+        list: Sorted list of class labels for Tiny ImageNet.
+    """
+    tiny_imagenet = TinyImageNet(root=dataset_root, split="train")
+    train_folder = tiny_imagenet.split_folder
+
+    # Get the list of folder names, which correspond to class labels
+    class_labels = sorted(os.listdir(train_folder))
+    return class_labels

@@ -114,7 +114,7 @@ def get_dataset(dataset, train=False):
         if train==True:
             dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="train")
         else:
-            dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="val")
+            dataset = TinyImageNet(os.getcwd()+"/data/", download=True, transform=transform, split="test")
         input_shape=[1, 224, 224]
         n_samples=100000
         num_classes=200

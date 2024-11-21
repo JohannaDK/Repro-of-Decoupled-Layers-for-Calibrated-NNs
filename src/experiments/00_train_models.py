@@ -37,6 +37,7 @@ parser.add_argument("--simple_decoder", action=argparse.BooleanOptionalAction, d
 parser.add_argument("--fix_varq", action=argparse.BooleanOptionalAction, default=False)
 parser.add_argument("--mlp_size", type=int, default=3)
 parser.add_argument("--train_samples", type=int, default=1)
+parser.add_argument("--vitbase", type=str, default='google/vit-base-patch16-224-in21k')
 
 if torch.cuda.is_available():
     parser.add_argument("--accelerator", type=str, default="gpu")
@@ -125,23 +126,23 @@ for i in range(args.seeds_per_job):
     elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="VTSTEXP" and args.pretrained_qyx is not None:
         model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, train_samples=args.train_samples, MLP_size=args.mlp_size)
     elif args.model=="VIT" and (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10"):
-        model = ViT(dataset=args.dataset, model_name_or_path='google/vit-base-patch16-224-in21k')
-    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is not None:
-    #    model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_VIT_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, simple_CNN=True)
-    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is None:
-    #    model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=None, separate_body=True, simple_CNN=True)
-    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is not None:
-    #    model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_VIT_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True, simple_CNN=True)
-    #elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is None:
-    #    model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=None, separate_body=True, simple_CNN=True)
+        model = ViT(dataset=args.dataset, model_name_or_path=args.vitbase)
+    elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is not None:
+        model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_VIT_model(args.pretrained_qyx, model_name_or_path=args.vitbase, dataset=args.dataset), separate_body=True, simple_CNN=False, ViT_experiment=True)
+    elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="TST_VIT" and args.pretrained_qyx is None:
+        model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=None, separate_body=True, simple_CNN=False, ViT_experiment=True)
+    elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is not None:
+        model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=load_VIT_model(args.pretrained_qyx, model_name_or_path=args.vitbase, dataset=args.dataset), separate_body=True, simple_CNN=False, ViT_experiment=True)
+    elif (args.dataset == "TINYIMAGENET" or args.dataset =="CIFAR10") and args.model=="VTST_VIT" and args.pretrained_qyx is None:
+        model = VTST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, bound_qzx_var=True, pretrained_qyx=None, separate_body=True, simple_CNN=False, ViT_experiment=True)
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
     if args.model =="WRN" or args.model == "CNN" or args.model == "VIT":
         lightning_module = lt_disc_models(model, num_classes)
-    elif args.model == "TST" or args.model == "TST_CNN" or args.model == "REINIT" or  args.model == "TSTEXP":
+    elif args.model == "TST" or args.model == "TST_CNN" or args.model == "REINIT" or  args.model == "TSTEXP" or args.model == "TST_VIT":
         lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
-    elif args.model == "VTST" or args.model == "VTST_CNN" or args.model == "VTSTEXP":
+    elif args.model == "VTST" or args.model == "VTST_CNN" or args.model == "VTSTEXP" or args.model == "VTST_VIT":
         lightning_module = VTST_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
     else:
         raise Exception("Oops, requested model does not have an accompanying lightning module!")

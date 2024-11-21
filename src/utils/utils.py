@@ -58,40 +58,48 @@ def load_VIT_model(path, model_name_or_path, dataset="CIFAR10", map_location="cp
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3):
+def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3, ViT_experiment=False):
     if simple_CNN:
         return CNNHead(latent_dim)
+    elif ViT_experiment:
+        return ViTHead(latent_dim)
     elif num_layers == 4:
         return WRN2810HeadMLP4(latent_dim)
     elif num_layers == 5:
         return WRN2810HeadMLP5(latent_dim)
     return WRN2810Head(latent_dim)
 
-def construct_EncoderVar(dataset, latent_dim, simple_CNN=False, num_layers=3):
+def construct_EncoderVar(dataset, latent_dim, simple_CNN=False, num_layers=3, ViT_experiment=False):
     if simple_CNN:
         return CNNVarHead(latent_dim)
+    elif ViT_experiment:
+        return ViTVarHead(latent_dim)
     elif num_layers == 4:
         return WRN2810VarHeadMLP4(latent_dim)
     elif num_layers == 5:
         return WRN2810VarHeadMLP5(latent_dim)
     return WRN2810VarHead(latent_dim)
 
-def construct_LabelDecoder(dataset, latent_dim, num_classes, simple_CNN=False):
+def construct_LabelDecoder(dataset, latent_dim, num_classes, simple_CNN=False, ViT_experiment=False):
     return CIFAR10SimpelLabelDecoder(latent_dim, num_classes=num_classes)
 
 def reset_CIFA10LabelDecoder(num_classes):
     return CIFAR10SimpelLabelDecoder(64*WIDERESNET_WIDTH_WANG2023, num_classes=num_classes)
 
-def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False):
+def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_experiment=False, dataset=None, model_name_or_path='google/vit-base-patch16-224-in21k'):
     if pretrained_model is None:
         if simple_CNN:
             return CNNBody()
+        elif ViT_experiment:
+            return ViTBody(dataset, model_name_or_path)
         else:
             return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
     else:
         pretrained_dict =  pretrained_model.state_dict()
         if simple_CNN:
             encoder_model = CNNBody()
+        elif ViT_experiment:
+            encoder_model = ViTBody(dataset, model_name_or_path)
         else:
             encoder_model = WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
         encoder_dict = encoder_model.state_dict()

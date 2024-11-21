@@ -7,7 +7,7 @@ from src.utils.utils import *
 
 class TST(nn.Module):
     def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, pretrained_qyx = None, accelerator="cpu", MLP_size=3,
-                 paper=None, simple_CNN=False, ViT_experiment=False, reinit_experiment=False):
+                 paper=None, simple_CNN=False, ViT_experiment=False, reinit_experiment=False, model_name_or_path='google/vit-base-patch16-224-in21k'):
         super().__init__()
         self.latent_dim = latent_dim
         
@@ -16,15 +16,14 @@ class TST(nn.Module):
         else:
             self.separate_body = False
         if dataset == "CIFAR10" or self.separate_body:
-            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN)
-        self.qzx_model = construct_ClassYEncoder(dataset, latent_dim, simple_CNN=simple_CNN)
+            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN, ViT_experiment=ViT_experiment, dataset=dataset, model_name_or_path=model_name_or_path)
 
         if reinit_experiment:
             self.reinit_experiment = True
             self.pyz = reset_CIFA10LabelDecoder(num_classes=num_classes)
         else:
             self.reinit_experiment = False
-            self.qzx_model = construct_ClassYEncoder(dataset, latent_dim, simple_CNN=simple_CNN, MLP_size)
+            self.qzx_model = construct_ClassYEncoder(dataset, latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size, ViT_experiment=ViT_experiment)
             self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
         self.return_z = False
