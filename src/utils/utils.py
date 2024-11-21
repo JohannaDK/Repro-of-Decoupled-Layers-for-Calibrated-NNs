@@ -68,6 +68,10 @@ def load_model(name, path, device="cuda:0"):
         return TS_Module.load_from_checkpoint(path, map_location=device).model
     elif name == "WRN":
          return lt_disc_models.load_from_checkpoint(path, map_location=device).model
+    elif name == "REINIT":
+        return TS_Module.load_from_checkpoint(path, map_location=device).model
+    elif name == "TSTEXP":
+        return TS_Module.load_from_checkpoint(path, map_location=device).model
 
 
 def get_valid_loader(dataset, batch_size):

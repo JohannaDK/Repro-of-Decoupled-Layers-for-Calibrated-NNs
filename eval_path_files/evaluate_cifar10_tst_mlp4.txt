@@ -1,0 +1,10 @@
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=0-epoch=04-valid_loss=0.304-model_name=TSTEXP_CIFAR10_MLP4_seed0.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=1-epoch=05-valid_loss=0.304-model_name=TSTEXP_CIFAR10_MLP4_seed1.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=2-epoch=03-valid_loss=0.294-model_name=TSTEXP_CIFAR10_MLP4_seed2.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=3-epoch=04-valid_loss=0.339-model_name=TSTEXP_CIFAR10_MLP4_seed3.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=4-epoch=04-valid_loss=0.323-model_name=TSTEXP_CIFAR10_MLP4_seed4.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=5-epoch=04-valid_loss=0.297-model_name=TSTEXP_CIFAR10_MLP4_seed5.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=6-epoch=04-valid_loss=0.278-model_name=TSTEXP_CIFAR10_MLP4_seed6.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=7-epoch=04-valid_loss=0.271-model_name=TSTEXP_CIFAR10_MLP4_seed7.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=8-epoch=04-valid_loss=0.331-model_name=TSTEXP_CIFAR10_MLP4_seed8.ckpt
+experiment_results/CIFAR10_TSTEXP/checkpoints/seed=9-epoch=04-valid_loss=0.358-model_name=TSTEXP_CIFAR10_MLP4_seed9.ckpt

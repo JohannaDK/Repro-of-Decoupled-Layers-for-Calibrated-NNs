@@ -1,0 +1,10 @@
+experiment_results/CIFAR10_REINIT/checkpoints/seed=0-epoch=11-valid_loss=0.251-model_name=REINIT_CIFAR10_FINETUNE_seed0.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=1-epoch=12-valid_loss=0.248-model_name=REINIT_CIFAR10_FINETUNE_seed1.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=2-epoch=11-valid_loss=0.248-model_name=REINIT_CIFAR10_FINETUNE_seed2.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=4-epoch=13-valid_loss=0.248-model_name=REINIT_CIFAR10_FINETUNE_seed4.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=3-epoch=09-valid_loss=0.248-model_name=REINIT_CIFAR10_FINETUNE_seed3.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=5-epoch=09-valid_loss=0.246-model_name=REINIT_CIFAR10_FINETUNE_seed5.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=6-epoch=08-valid_loss=0.251-model_name=REINIT_CIFAR10_FINETUNE_seed6.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=7-epoch=10-valid_loss=0.246-model_name=REINIT_CIFAR10_FINETUNE_seed7.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=8-epoch=09-valid_loss=0.248-model_name=REINIT_CIFAR10_FINETUNE_seed8.ckpt
+experiment_results/CIFAR10_REINIT/checkpoints/seed=9-epoch=07-valid_loss=0.247-model_name=REINIT_CIFAR10_FINETUNE_seed9.ckpt

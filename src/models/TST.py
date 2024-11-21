@@ -23,7 +23,7 @@ class TST(nn.Module):
             self.pyz = reset_CIFA10LabelDecoder(num_classes=num_classes)
         else:
             self.reinit_experiment = False
-            self.qzx_model = construct_ClassYEncoder(dataset, latent_dim, MLP_size)
+            self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, MLP_size)
             self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
         self.return_z = False
