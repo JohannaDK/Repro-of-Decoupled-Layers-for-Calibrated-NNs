@@ -1,8 +1,10 @@
 .venv
 .DS_Store
-data
+data/*
 /src/**/__pycache__/
 experiment_results/*
 !/experiment_results/table_metrics/
 train_scripts/output.log
 test_scripts/output.log
+dd2412
+!data/tinyimagenet.py

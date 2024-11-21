@@ -44,7 +44,7 @@ class ViT(nn.Module):
         else: 
              raise Exception("Oops, this dataset cannot be combined with a ViT!")
         
-        self.processor = ViTImageProcessor.from_pretrained(model_name_or_path)
+        #self.processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
         self.vit = ViTForImageClassification.from_pretrained(
                         model_name_or_path,

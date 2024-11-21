@@ -19,9 +19,9 @@ class VTST(nn.Module):
             self.separate_body = False
         if dataset == "CIFAR10" or self.separate_body:
             self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN)
-        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, simple_CNN=simple_CNN, MLP_size)
+        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size)
         if self.bound_qzx_var:
-            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, simple_CNN=simple_CNN, MLP_size)
+            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size)
 
         self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
