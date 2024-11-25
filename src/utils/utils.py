@@ -37,9 +37,9 @@ def construct_ClassYEncoder(dataset, latent_dim, num_layers=3):
 
 def construct_EncoderVar(dataset, latent_dim, num_layers=3):
     if num_layers == 4:
-        return WRN2810HeadMLP4(latent_dim)
+        return WRN2810VarHeadMLP4(latent_dim)
     elif num_layers == 5:
-        return WRN2810HeadMLP5(latent_dim)
+        return WRN2810VarHeadMLP5(latent_dim)
     return WRN2810VarHead(latent_dim)
 
 def construct_LabelDecoder(dataset, latent_dim, num_classes):

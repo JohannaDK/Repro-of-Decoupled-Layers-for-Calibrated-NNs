@@ -19,9 +19,10 @@ class VTST(nn.Module):
             self.separate_body = False
         if dataset == "CIFAR10" or self.separate_body:
             self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx)
-        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim)
+        
+        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, MLP_size)
         if self.bound_qzx_var:
-            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim)
+            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, MLP_size)
 
         self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
@@ -69,13 +70,22 @@ class VTST(nn.Module):
         else:
             z_mean, z_logvar = self.encode(x, y)
 
-
-        z = self.reparameterize(z_mean, z_logvar)
-        pyz = self.decode(z, y)
+        # z = self.reparameterize(z_mean, z_logvar)
+        # pyz = self.decode(z, y)
 
         if self.training == True:
+            MC_logits = []
+            for i in range(self.train_samples):
+                z = self.reparameterize(z_mean, z_logvar)
+                pyz = self.decode(z, y)
+                MC_logits.append(pyz)
+
+            pyz = torch.mean(torch.stack(MC_logits), dim=0)
             return pyz, z_mean, z_logvar, z
         else:
+            z = self.reparameterize(z_mean, z_logvar)
+            pyz = self.decode(z, y)
+            
             if self.return_z:
                 return pyz, z_mean, z_logvar, z
             else:
