@@ -6,7 +6,8 @@ import math
 from typing import Tuple, Union
 from src.models.ResBlock import *
 from src.models.WRN import _BlockGroup
-from transformers import ViTForImageClassification, ViTImageProcessor, ViTModel
+from src.models.ViT import *
+from transformers import ViTForImageClassification, ViTImageProcessor, ViTModel, ViTConfig
 from data.tinyimagenet import *
 
 WIDERESNET_WIDTH_WANG2023=10
@@ -259,29 +260,18 @@ class ViTBody(nn.Module):
         else:
              raise Exception("Oops, this dataset cannot be combined with a ViT!")
 
+        config = ViTConfig.from_pretrained(model_name_or_path)
+        config.add_pooling_layer = False
+        config.num_labels = len(labels)
+        config.id2label = {str(i): c for i, c in enumerate(labels)}
+        config.label2id = {c: str(i) for i, c in enumerate(labels)}
         self.vit = ViTModel.from_pretrained(
                         model_name_or_path,
-                        num_labels=len(labels),
-                        id2label={str(i): c for i, c in enumerate(labels)},
-                        label2id={c: str(i) for i, c in enumerate(labels)}
+                        config=config
                     )
 
     def forward(self, x):
-        return self.vit(x).pooler_output
+        outputs = self.vit(x)
+        sequence_output = outputs[0]
 
-def get_tinyimagenet_labels_from_dataset(dataset_root):
-    """
-    Extract labels for Tiny ImageNet dataset using the TinyImageNet class.
-
-    Args:
-        dataset_root (str): Path to the Tiny ImageNet root directory.
-
-    Returns:
-        list: Sorted list of class labels for Tiny ImageNet.
-    """
-    tiny_imagenet = TinyImageNet(root=dataset_root, split="train")
-    train_folder = tiny_imagenet.split_folder
-
-    # Get the list of folder names, which correspond to class labels
-    class_labels = sorted(os.listdir(train_folder))
-    return class_labels
+        return sequence_output[:, 0, :]
