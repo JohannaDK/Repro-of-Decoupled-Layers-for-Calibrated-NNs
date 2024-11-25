@@ -1,0 +1,10 @@
+experiment_results/CIFAR100_VTST/checkpoints/seed=0-epoch=07-valid_loss=1.741-model_name=VTST_CIFAR100_Z512_seed0.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=1-epoch=20-valid_loss=1.737-model_name=VTST_CIFAR100_Z512_seed1.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=2-epoch=10-valid_loss=1.740-model_name=VTST_CIFAR100_Z512_seed2.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=3-epoch=11-valid_loss=1.738-model_name=VTST_CIFAR100_Z512_seed3.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=4-epoch=07-valid_loss=1.734-model_name=VTST_CIFAR100_Z512_seed4.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=5-epoch=13-valid_loss=1.722-model_name=VTST_CIFAR100_Z512_seed5.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=6-epoch=10-valid_loss=1.743-model_name=VTST_CIFAR100_Z512_seed6.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=7-epoch=15-valid_loss=1.723-model_name=VTST_CIFAR100_Z512_seed7.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=8-epoch=09-valid_loss=1.718-model_name=VTST_CIFAR100_Z512_seed8.ckpt
+experiment_results/CIFAR100_VTST/checkpoints/seed=9-epoch=06-valid_loss=1.736-model_name=VTST_CIFAR100_Z512_seed9.ckpt
