@@ -269,6 +269,8 @@ class ViTBody(nn.Module):
                         model_name_or_path,
                         config=config
                     )
+        #print("When initializing the ViTBody, these are the keys of the weights dict:")
+        #print(self.vit.state_dict().keys())
 
     def forward(self, x):
         outputs = self.vit(x)
