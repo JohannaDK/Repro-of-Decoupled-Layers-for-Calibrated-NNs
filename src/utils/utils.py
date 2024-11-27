@@ -50,6 +50,9 @@ def load_VIT_model(path, model_name_or_path, dataset="CIFAR10", map_location="cp
         model = ViT(dataset, model_name_or_path)
     elif dataset.find("CIFAR10") != -1:
         model = ViT(dataset, model_name_or_path)
+
+    #initial_weights = {k: v.clone() for k, v in model.state_dict().items()}
+
     checkpoint = torch.load(path, map_location=map_location)
     checkpoint_cleaned = OrderedDict()
     for key in checkpoint['state_dict'].keys():
@@ -96,6 +99,17 @@ def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_exp
             return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
     else:
         pretrained_dict =  pretrained_model.state_dict()
+        #print("THIS IS THE LENGTH OF THE PRETRAINED DICT BEGINNING OF CLASSYENCODERBODY FUNCTION!!")
+        #print(len(pretrained_dict))
+        #print(pretrained_dict.keys())
+        pretrained_dict_cleaned = OrderedDict()
+        for key, value in pretrained_dict.items():
+            if key.startswith("vit.vit"):
+                new_key = key[len("vit."):]  # Remove the first 'vit.'
+            else:
+                new_key = key
+            pretrained_dict_cleaned[new_key] = value
+
         if simple_CNN:
             encoder_model = CNNBody()
         elif ViT_experiment:
@@ -103,7 +117,15 @@ def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_exp
         else:
             encoder_model = WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
         encoder_dict = encoder_model.state_dict()
-        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in encoder_dict}
+        pretrained_dict = {k: v for k, v in pretrained_dict_cleaned.items() if k in encoder_dict}
+        print("Keys in pretrained model state_dict:")
+        print(len(pretrained_dict.keys()))
+        #print(pretrained_dict.keys())
+
+        print("Keys in encoder model state_dict:")
+        print(len(encoder_dict.keys()))
+        #print(encoder_dict.keys())
+
         encoder_dict.update(pretrained_dict)
         encoder_model.load_state_dict(encoder_dict)
         return encoder_model
