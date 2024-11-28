@@ -107,11 +107,17 @@ class VTST_Module(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         pyz, z_mean, z_logvar, z = self.model(x)
-        class_loss = nn.functional.cross_entropy(pyz, y)
+
+        class_losses = []
+        for sample_logits in pyz:
+            class_loss = nn.functional.cross_entropy(sample_logits, y, reduction='none')  # Shape: [batch_size]
+            class_losses.append(class_loss)
+        class_loss = torch.mean(torch.stack(class_losses, dim=0))  # Average over samples and batch
+
         #KL Term
         kld_loss = torch.mean(-0.5 * torch.sum(1 + z_logvar - z_mean ** 2 - z_logvar.exp(), dim = 1)/self.model.latent_dim, dim = 0)
         loss = kld_loss + class_loss
-        train_acc = self.train_acc(pyz, y)
+        train_acc = self.train_acc(torch.mean(pyz, dim=0), y)
         self.log("train_accuracy", train_acc, on_step=True, on_epoch=False)
         self.log("Z mean", torch.mean(z_mean), on_step=True, on_epoch=False)
         self.log("Z var", torch.mean(torch.exp(z_logvar)), on_step=True, on_epoch=False)
