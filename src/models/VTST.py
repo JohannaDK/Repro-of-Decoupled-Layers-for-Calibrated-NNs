@@ -80,7 +80,7 @@ class VTST(nn.Module):
                 pyz = self.decode(z, y)
                 MC_logits.append(pyz)
 
-            pyz = torch.mean(torch.stack(MC_logits), dim=0)
+            pyz = torch.stack(MC_logits)
             return pyz, z_mean, z_logvar, z
         else:
             z = self.reparameterize(z_mean, z_logvar)
