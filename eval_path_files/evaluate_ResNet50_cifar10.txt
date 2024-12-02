@@ -1,0 +1,1 @@
+experiment_results/CIFAR10_ResNet50/checkpoints/seed=1-epoch=05-valid_loss=0.542-model_name=ResNet50_CIFAR10_Base_seed1.ckpt
