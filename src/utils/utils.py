@@ -31,7 +31,6 @@ def load_WRN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-# TODO: write new function load_model that has input argument model if this works
 def load_CNN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=True):
     if dataset.find("CIFAR100") != -1:
         model = CNN(num_classes=100)
@@ -99,9 +98,6 @@ def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_exp
             return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
     else:
         pretrained_dict =  pretrained_model.state_dict()
-        #print("THIS IS THE LENGTH OF THE PRETRAINED DICT BEGINNING OF CLASSYENCODERBODY FUNCTION!!")
-        #print(len(pretrained_dict))
-        #print(pretrained_dict.keys())
         pretrained_dict_cleaned = OrderedDict()
         for key, value in pretrained_dict.items():
             if key.startswith("vit.vit"):
@@ -118,14 +114,6 @@ def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_exp
             encoder_model = WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
         encoder_dict = encoder_model.state_dict()
         pretrained_dict = {k: v for k, v in pretrained_dict_cleaned.items() if k in encoder_dict}
-        print("Keys in pretrained model state_dict:")
-        print(len(pretrained_dict.keys()))
-        #print(pretrained_dict.keys())
-
-        print("Keys in encoder model state_dict:")
-        print(len(encoder_dict.keys()))
-        #print(encoder_dict.keys())
-
         encoder_dict.update(pretrained_dict)
         encoder_model.load_state_dict(encoder_dict)
         return encoder_model
@@ -140,6 +128,8 @@ def load_model(name, path, device="cuda:0"):
          return lt_disc_models.load_from_checkpoint(path, map_location=device).model
     elif name == "REINIT":
         return TS_Module.load_from_checkpoint(path, map_location=device).model
+    elif name == "ResNet50":
+         return lt_disc_models.load_from_checkpoint(path, map_location=device).model
 
 
 def get_valid_loader(dataset, batch_size):
