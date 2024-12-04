@@ -1,0 +1,10 @@
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=0-epoch=02-valid_loss=0.721-model_name=TST_TINYIMAGENET_VIT_Base_seed0.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=1-epoch=02-valid_loss=0.715-model_name=TST_TINYIMAGENET_VIT_Base_seed1.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=2-epoch=02-valid_loss=0.717-model_name=TST_TINYIMAGENET_VIT_Base_seed2.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=3-epoch=03-valid_loss=0.716-model_name=TST_TINYIMAGENET_VIT_Base_seed3.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=4-epoch=03-valid_loss=0.716-model_name=TST_TINYIMAGENET_VIT_Base_seed4.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=5-epoch=02-valid_loss=0.722-model_name=TST_TINYIMAGENET_VIT_Base_seed5.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=6-epoch=02-valid_loss=0.716-model_name=TST_TINYIMAGENET_VIT_Base_seed6.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=7-epoch=02-valid_loss=0.714-model_name=TST_TINYIMAGENET_VIT_Base_seed7.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=8-epoch=02-valid_loss=0.717-model_name=TST_TINYIMAGENET_VIT_Base_seed8.ckpt
+/experiment_results/TINYIMAGENET_TST_VIT/checkpoints/seed=9-epoch=01-valid_loss=0.712-model_name=TST_TINYIMAGENET_VIT_Base_seed9.ckpt
