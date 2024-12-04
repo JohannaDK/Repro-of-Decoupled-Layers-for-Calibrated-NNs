@@ -1,4 +1,64 @@
-# Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks (Accepted at ICML 2024)
+# TODO: Fix ReadMe to our project
+
+
+To firstly train a base WRN 28-10 for a dataset, run the following command but replacing \<DATASET\> with CIFAR10, SVHN or CIFAR100:
+
+```
+python3 src/experiments/00_train_models.py \
+    --model WRN \
+    --epochs 600 \
+    --accelerator gpu \
+    --seed <SEED> \
+    --dataset <DATASET> \
+    --model_name WRN_<DATASET>_28_10_Base \
+    --batch_size 256 \
+    --loss <loss>
+```
+where `loss` is one of the following: `ce`, `fl` or `fla`. If the loss is `fl` or `fla`, the arguments `--gammas` and `--probs` have to be included. The default loss is `ce`.
+
+
+The trained model found with best validation should be saved in ./experiment_results/\<DATASET\>_WRN/checkpoints. Now to run TST, run the following command-line command:
+
+```
+python3 src/experiments/00_train_models.py \
+    --freeze_qyx \
+    --model_name TST_<DATASET>_Z<Z> \
+    --model TST \
+    --epochs 40 \
+    --accelerator gpu \
+    --latent_dim <Z> \
+    --seed <SEED> \
+    --pretrained_qyx <PATH_TO_TRAINED_WRN> \
+    --dataset <DATASET> \
+    --loss fla \
+    --gammas 5 3 \
+    --probs 0.2 1
+```
+
+To similarly train V-TST, run:
+
+```
+python3 src/experiments/00_train_models.py \
+    --freeze_qyx \
+    --model_name VTST_<DATASET>_Z<Z> \
+    --model VTST \
+    --epochs 40 \
+    --accelerator gpu \
+    --latent_dim <Z> \
+    --seed <SEED> \
+    --pretrained_qyx <PATH_TO_TRAINED_WRN> \
+    --dataset <DATASET> \
+    --loss fl \
+    --gammas 3 \
+    --probs 1
+```
+
+---
+--- 
+
+## From Original Authors
+
+##  Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks (Accepted at ICML 2024)
 We provide the code for reproducing the WideResNet, TST and V-TST results seen in Table 1 and Table 2 of "Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks". This document serves as a guideline for how to run the scripts. The paper can be found at: https://openreview.net/pdf?id=F2Tegvyqlo.
 
 ### OBS: There is a mistake in algorithm 1 (TST) on the poster from ICML and the paper - you should always early stop based on negative log-likelihood on the validation set in stage 2. The code is correct and the experimental setup description in the appendix is correct as well.

@@ -11,3 +11,5 @@ lightning-utilities==0.9.0
 foolbox==3.3.3
 scikit-learn==1.1.3
 scipy==1.11.2
+ood-metrics==1.1.2
+transformers==4.46.3

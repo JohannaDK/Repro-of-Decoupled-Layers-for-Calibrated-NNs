@@ -21,6 +21,7 @@ from src.utils.utils import *
 import torchvision.transforms as transforms
 from lightning.pytorch.callbacks import ModelCheckpoint
 
+
 parser = ArgumentParser()
 parser.add_argument("--latent_dim", type=int, default=10)
 parser.add_argument("--seed", type=int, default=0)
@@ -38,6 +39,10 @@ parser.add_argument("--fix_varq", action=argparse.BooleanOptionalAction, default
 parser.add_argument("--mlp_size", type=int, default=3)
 parser.add_argument("--train_samples", type=int, default=1)
 parser.add_argument("--vitbase", type=str, default='google/vit-base-patch16-224-in21k')
+parser.add_argument("--loss", type=str, default="ce")
+parser.add_argument('--gammas', nargs='+')
+parser.add_argument('--probs', nargs='+')
+
 
 if torch.cuda.is_available():
     parser.add_argument("--accelerator", type=str, default="gpu")
@@ -138,12 +143,14 @@ for i in range(args.seeds_per_job):
     else:
         raise Exception("Oops, requested model does not exist for this specific dataset!")
 
+    gammas = [float(gamma) for gamma in args.gammas] if args.gammas else None
+    probs = [float(prob) for prob in args.probs] if args.probs else None
     if args.model =="WRN" or args.model == "CNN" or args.model == "VIT":
-        lightning_module = lt_disc_models(model, num_classes)
+        lightning_module = lt_disc_models(model, num_classes, loss=args.loss, gammas=gammas, probs=probs)
     elif args.model == "TST" or args.model == "TST_CNN" or args.model == "REINIT" or  args.model == "TSTEXP" or args.model == "TST_VIT":
-        lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
+        lightning_module = TS_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset, loss=args.loss, gammas=gammas, probs=probs)
     elif args.model == "VTST" or args.model == "VTST_CNN" or args.model == "VTSTEXP" or args.model == "VTST_VIT":
-        lightning_module = VTST_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset)
+        lightning_module = VTST_Module(model, num_classes, device=args.accelerator, freeze_qyx=args.freeze_qyx, dataset=args.dataset, loss=args.loss, gammas=gammas, probs=probs)
     else:
         raise Exception("Oops, requested model does not have an accompanying lightning module!")
 
