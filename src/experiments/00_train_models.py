@@ -11,6 +11,7 @@ from src.models.VTST import *
 from src.models.WRN import *
 from src.models.CNN import *
 from src.models.ResNet import ResNet50
+from src.models.ResNet_new import *
 import torch.utils.data as data
 from argparse import ArgumentParser
 from torch.utils.data import DataLoader
@@ -108,7 +109,7 @@ for i in range(args.seeds_per_job):
     if args.model == "WRN" and (args.dataset == "SVHN" or args.dataset=="CIFAR100" or args.dataset=="CIFAR10"):
         model = WideResNet(num_classes=num_classes, depth=28, width=10, num_input_channels=3)
     elif args.model == "ResNet50" and (args.dataset == "SVHN" or args.dataset=="CIFAR100" or args.dataset=="CIFAR10"):
-        model = ResNet50(num_classes=num_classes, pretrained=True)
+        model = ResNet50()
     elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="TST" and args.pretrained_qyx is not None:
         model = TST(dataset=args.dataset, num_classes=num_classes, latent_dim=args.latent_dim, accelerator=args.accelerator, pretrained_qyx=load_WRN_model(args.pretrained_qyx, dataset=args.dataset), separate_body=True)
     elif (args.dataset == "SVHN" or args.dataset =="CIFAR10" or args.dataset=="CIFAR100") and args.model=="TST" and args.pretrained_qyx is None:
