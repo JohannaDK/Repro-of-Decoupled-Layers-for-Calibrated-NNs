@@ -8,6 +8,7 @@ import os
 from src.models.WRN import *
 from src.models.CNN import *
 from src.models.ViT import *
+from src.models.ResNet_new import *
 from torch.utils.data import DataLoader
 import json
 import torchvision.transforms as transforms
@@ -17,6 +18,19 @@ from data.tinyimagenet import *
 from src.models.TemperatureScaler import *
 
 EVAL_PATH = "./experiment_results/robustness_evaluations/"
+
+def load_ResNet50_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=True):
+    if dataset.find("CIFAR100") != -1:
+        model = ResNet50(num_classes=100)
+    elif dataset.find("CIFAR10") != -1 or dataset.find("SVHN") != -1:
+        model = ResNet50(num_classes=10)
+    checkpoint = torch.load(path, map_location=map_location)
+    checkpoint_cleaned = OrderedDict()
+    for key in checkpoint['state_dict'].keys():
+        new_key = ".".join(key.split(".")[1:])
+        checkpoint_cleaned[new_key] = checkpoint['state_dict'][key]
+    model.load_state_dict(checkpoint_cleaned)
+    return model
 
 def load_WRN_model(path, dataset="CIFAR10", map_location="cpu", clean_dict_keys=True):
     if dataset.find("CIFAR100") != -1:
@@ -60,7 +74,7 @@ def load_VIT_model(path, model_name_or_path, dataset="CIFAR10", map_location="cp
     model.load_state_dict(checkpoint_cleaned)
     return model
 
-def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3, ViT_experiment=False):
+def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3, ViT_experiment=False, ResNet50_experiment=False):
     if simple_CNN:
         return CNNHead(latent_dim)
     elif ViT_experiment:
@@ -69,7 +83,10 @@ def construct_ClassYEncoder(dataset, latent_dim, simple_CNN=False, num_layers=3,
         return WRN2810HeadMLP4(latent_dim)
     elif num_layers == 5:
         return WRN2810HeadMLP5(latent_dim)
-    return WRN2810Head(latent_dim)
+    elif ResNet50_experiment:
+        return ResNet50Head(latent_dim)
+    else:
+        return WRN2810Head(latent_dim)
 
 def construct_EncoderVar(dataset, latent_dim, simple_CNN=False, num_layers=3, ViT_experiment=False):
     if simple_CNN:
@@ -88,14 +105,17 @@ def construct_LabelDecoder(dataset, latent_dim, num_classes, simple_CNN=False, V
 def reset_CIFA10LabelDecoder(num_classes):
     return CIFAR10SimpelLabelDecoder(64*WIDERESNET_WIDTH_WANG2023, num_classes=num_classes)
 
-def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_experiment=False, dataset=None, model_name_or_path='google/vit-base-patch16-224-in21k'):
+def construct_ClassYEncoderBody(pretrained_model=None, simple_CNN=False, ViT_experiment=False, dataset=None, model_name_or_path='google/vit-base-patch16-224-in21k', ResNet50_experiment=False):
     if pretrained_model is None:
         if simple_CNN:
             return CNNBody()
         elif ViT_experiment:
             return ViTBody(dataset, model_name_or_path)
+        elif ResNet50_experiment:
+            encoder_model = ResNet50Body()
         else:
             return WRN2810Body(num_classes=10, depth=28, width=10, num_input_channels=3)
+
     else:
         pretrained_dict =  pretrained_model.state_dict()
         pretrained_dict_cleaned = OrderedDict()
