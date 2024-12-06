@@ -1,5 +1,3 @@
-#!/bin/bash	
-
 cd /home/ericbanzuzi/DD2412-Final-Project/
 export PYTHONPATH=$PWD
 echo "!!Training model!!"
@@ -9,6 +7,9 @@ python3 src/experiments/00_train_models.py \
     --accelerator gpu \
     --seed 1 \
     --dataset CIFAR10 \
-    --model_name WRN_CIFAR10_28_10_Base \
-    --batch_size 256
+    --model_name WRN_CIFAR10_28_10_FL \
+    --batch_size 256 \
+    --loss fl \
+    --gammas 3 \
+    --probs 1
 echo "!!Training done!!"
