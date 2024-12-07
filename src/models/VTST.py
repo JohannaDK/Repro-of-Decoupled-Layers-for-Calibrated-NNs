@@ -7,7 +7,7 @@ import torch.optim
 
 class VTST(nn.Module):
     def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False,
-                 MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, sample_experiment=False, train_samples=1):
+                 MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, sample_experiment=False, train_samples=1, model_name_or_path='google/vit-base-patch16-224-in21k'):
         super().__init__()
         self.latent_dim = latent_dim
         self.bound_qzx_var = bound_qzx_var
