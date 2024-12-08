@@ -69,22 +69,22 @@ class VTST(nn.Module):
         else:
             z_mean, z_logvar = self.encode(x, y)
 
-        # z = self.reparameterize(z_mean, z_logvar)
-        # pyz = self.decode(z, y)
-
         if self.training == True:
-            MC_logits = []
-            for i in range(self.train_samples):
+            if self.train_samples > 1:
+                MC_logits = []
+                for _ in range(self.train_samples):
+                    z = self.reparameterize(z_mean, z_logvar)
+                    pyz = self.decode(z, y)
+                    MC_logits.append(pyz)
+
+                pyz = torch.stack(MC_logits)
+            else:
                 z = self.reparameterize(z_mean, z_logvar)
                 pyz = self.decode(z, y)
-                MC_logits.append(pyz)
-
-            pyz = torch.stack(MC_logits)
             return pyz, z_mean, z_logvar, z
         else:
             z = self.reparameterize(z_mean, z_logvar)
             pyz = self.decode(z, y)
-
             if self.return_z:
                 return pyz, z_mean, z_logvar, z
             else:

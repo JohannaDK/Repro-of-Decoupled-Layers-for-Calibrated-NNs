@@ -135,22 +135,27 @@ class VTST_Module(pl.LightningModule):
         pyz, z_mean, z_logvar, z = self.model(x)
 
         if self.loss == 'ce':
-            class_losses = []
-            for sample_logits in pyz:
-                class_loss = nn.functional.cross_entropy(sample_logits, y, reduction='none')  # Shape: [batch_size]
-                class_losses.append(class_loss)
-            class_loss = torch.mean(torch.stack(class_losses, dim=0))  # Average over samples and batch
+            if self.model.train_samples > 1:
+                class_losses = []
+                for sample_logits in pyz:
+                    class_loss = nn.functional.cross_entropy(sample_logits, y, reduction='none')  # Shape: [batch_size]
+                    class_losses.append(class_loss)
+                class_loss = torch.mean(torch.stack(class_losses, dim=0))  # Average over samples and batch
+            else:
+                class_loss = nn.functional.cross_entropy(pyz, y)
         elif self.loss == 'fl':
-            pyz = pyz[0]
+            if self.model.train_samples > 1:
+                raise NotImplementedError('Multiple training samples for FL is not supported!!')
             class_loss = FocalLoss(device=self._device, gammas=self.gammas, probs=self.probs)(pyz, y)
         elif self.loss == 'fla':
-            pyz = pyz[0]
+            if self.model.train_samples > 1:
+                raise NotImplementedError('Multiple training samples for FLA is not supported!!')
             class_loss = FocalLoss(device=self._device, gammas=self.gammas, probs=self.probs, adaptive=True)(pyz, y)
 
         #KL Term
         kld_loss = torch.mean(-0.5 * torch.sum(1 + z_logvar - z_mean ** 2 - z_logvar.exp(), dim = 1)/self.model.latent_dim, dim = 0)
         loss = kld_loss + class_loss
-        train_acc = self.train_acc(torch.mean(pyz, dim=0), y)
+        train_acc = self.train_acc(torch.mean(pyz, dim=0), y) if self.model.train_samples > 1 else self.train_acc(pyz, y)
         self.log("train_accuracy", train_acc, on_step=True, on_epoch=False)
         self.log("Z mean", torch.mean(z_mean), on_step=True, on_epoch=False)
         self.log("Z var", torch.mean(torch.exp(z_logvar)), on_step=True, on_epoch=False)
