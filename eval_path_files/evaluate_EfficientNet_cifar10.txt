@@ -1,0 +1,1 @@
+experiment_results/CIFAR10_EfficientNet/checkpoints/seed=1-epoch=28-valid_loss=0.775-model_name=EfficientNet_CIFAR10_Base_new_seed1.ckpt

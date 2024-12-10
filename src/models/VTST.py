@@ -7,7 +7,8 @@ import torch.optim
 
 class VTST(nn.Module):
     def __init__(self, dataset="MNIST", latent_dim=128, num_classes=10, separate_body=False, beta=0.01, pretrained_qyx = None, accelerator="cpu", bound_qzx_var=False,
-                 MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, sample_experiment=False, train_samples=1, model_name_or_path='google/vit-base-patch16-224-in21k', ResNet50_experiment=False):
+                 MLP_size=3, paper=None, simple_CNN=False, ViT_experiment=False, sample_experiment=False, train_samples=1, model_name_or_path='google/vit-base-patch16-224-in21k',
+                 ResNet50_experiment=False, EfficientNet_experiment=False):
         super().__init__()
         self.latent_dim = latent_dim
         self.bound_qzx_var = bound_qzx_var
@@ -18,10 +19,10 @@ class VTST(nn.Module):
         else:
             self.separate_body = False
         if dataset == "CIFAR10" or self.separate_body:
-            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN,  ViT_experiment=ViT_experiment,dataset=dataset, model_name_or_path=model_name_or_path, ResNet50_experiment=ResNet50_experiment)
-        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size, ViT_experiment=ViT_experiment, ResNet50_experiment=ResNet50_experiment)
+            self.qzx_body = construct_ClassYEncoderBody(pretrained_model=pretrained_qyx, simple_CNN=simple_CNN,  ViT_experiment=ViT_experiment,dataset=dataset, model_name_or_path=model_name_or_path, ResNet50_experiment=ResNet50_experiment, EfficientNet_experiment=EfficientNet_experiment)
+        self.qzx_model = construct_ClassYEncoder(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size, ViT_experiment=ViT_experiment, ResNet50_experiment=ResNet50_experiment, EfficientNet_experiment=EfficientNet_experiment)
         if self.bound_qzx_var:
-            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size, ViT_experiment=ViT_experiment, ResNet50_experiment=ResNet50_experiment)
+            self.qzx_var = construct_EncoderVar(dataset, self.latent_dim, simple_CNN=simple_CNN, num_layers=MLP_size, ViT_experiment=ViT_experiment, ResNet50_experiment=ResNet50_experiment, EfficientNet_experiment=EfficientNet_experiment)
 
         self.pyz = construct_LabelDecoder(dataset, self.latent_dim, num_classes=num_classes)
 
