@@ -10,6 +10,7 @@ from src.models.ViT import *
 from transformers import ViTForImageClassification, ViTImageProcessor, ViTModel, ViTConfig
 from data.tinyimagenet import *
 from src.models.ResNet_new import *
+from src.models.EfficientNet_new import *
 
 WIDERESNET_WIDTH_WANG2023=10
 WIDERESNET_WIDTH_MNIST=4
@@ -336,3 +337,151 @@ class ResNet50Body(nn.Module):
         out = out.view(out.size(0), -1)
         #out = self.linear(out)
         return out
+
+class EfficientNetB5Body(nn.Module):
+    def __init__(self, cfg = {
+        'num_blocks': [3, 4, 6, 6, 8, 10, 1],
+        'expansion': [1, 6, 6, 6, 6, 6, 6],
+        'out_channels': [32, 48, 80, 160, 224, 384, 640],
+        'kernel_size': [3, 3, 5, 3, 5, 5, 3],
+        'stride': [1, 2, 2, 2, 1, 2, 1],
+        'dropout_rate': 0.4,
+        'drop_connect_rate': 0.2,
+        }, num_classes=10):
+        super(EfficientNetB5Body, self).__init__()
+        self.cfg = cfg
+        self.conv1 = nn.Conv2d(3,
+                               32,
+                               kernel_size=3,
+                               stride=1,
+                               padding=1,
+                               bias=False)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.layers = self._make_layers(in_channels=32)
+        #self.linear = nn.Linear(cfg['out_channels'][-1], num_classes)
+
+    def _make_layers(self, in_channels):
+        layers = []
+        cfg = [self.cfg[k] for k in ['expansion', 'out_channels', 'num_blocks', 'kernel_size',
+                                     'stride']]
+        b = 0
+        blocks = sum(self.cfg['num_blocks'])
+        for expansion, out_channels, num_blocks, kernel_size, stride in zip(*cfg):
+            strides = [stride] + [1] * (num_blocks - 1)
+            for stride in strides:
+                drop_rate = self.cfg['drop_connect_rate'] * b / blocks
+                layers.append(
+                    Block(in_channels,
+                          out_channels,
+                          kernel_size,
+                          stride,
+                          expansion,
+                          se_ratio=0.25,
+                          drop_rate=drop_rate))
+                in_channels = out_channels
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        out = swish(self.bn1(self.conv1(x)))
+        out = self.layers(out)
+        out = F.adaptive_avg_pool2d(out, 1)
+        out = out.view(out.size(0), -1)
+        dropout_rate = self.cfg['dropout_rate']
+        if self.training and dropout_rate > 0:
+            out = F.dropout(out, p=dropout_rate)
+        #out = self.linear(out)
+        return out
+
+class EfficientNetB5VarHead(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        self.fc1 = nn.Linear(640, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.logsigmoid(self.fc2(x))
+        return x
+
+class EfficientNetB5Head(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        self.fc1 = nn.Linear(640, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+#---------------OLD EFFICIENTNET-----------------------
+
+class EfficientNetBody_old(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
+        blocks_args, global_params = get_efficientnetv2_params("efficientnetv2-m", num_classes=num_classes)
+        self._blocks_args = blocks_args
+        self._global_params = global_params
+        # stem
+        inc = 3
+        outc = blocks_args[0].input_filters
+        self._stem_conv = Conv2dAutoPadding(inc, outc, 3, 1) #MODIFIED FOR CIFAR10 to have stride=1
+        self._bn0 = nn.BatchNorm2d(outc)
+        # blocks
+        self._blocks = nn.ModuleList([]) # BUG: [] -> nn.ModuleList([])
+        for block_arg in self._blocks_args:
+            block = FusedMBConvBlock(block_arg) if block_arg.fused == True else MBConvBlock(block_arg)
+            self._blocks.append(block)
+            if block_arg.num_repeat > 1:
+                block_arg = block_arg._replace(input_filters=block_arg.output_filters, stride=1)
+            for _ in range(block_arg.num_repeat - 1):
+                block = FusedMBConvBlock(block_arg) if block_arg.fused == True else MBConvBlock(block_arg)
+                self._blocks.append(block)
+        # head
+        inc = block_arg.output_filters
+        outc = int(self._global_params.width_coefficient * 1280)
+        self._head_conv = nn.Conv2d(inc, outc, 1, 1)
+        self._bn1 = nn.BatchNorm2d(outc)
+        # top
+        self._avg_pool = nn.AdaptiveAvgPool2d(1)
+        self._dropout = nn.Dropout(self._global_params.dropout_rate) # missing dropout
+        #self._fc = nn.Linear(outc, self._global_params.num_classes)
+        # activation
+        self._swish = nn.SiLU()  # hasattr?
+
+
+    def forward(self, inputs):
+        x = self._swish(self._bn0(self._stem_conv(inputs)))
+
+        for i, block in enumerate(self._blocks): # BUG: missing enumerate
+            x = block(x)
+
+        x = self._swish(self._bn1(self._head_conv(x)))
+
+        x = self._avg_pool(x)
+        x = x.flatten(start_dim=1)
+        x = self._dropout(x)
+        #x = self._fc(x)
+        return x
+
+class EfficientNetVarHead_old(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        self.fc1 = nn.Linear(1280, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.logsigmoid(self.fc2(x))
+        return x
+
+class EfficientNetHead_old(nn.Module):
+    def __init__(self, latent_dim: int = 128):
+        super().__init__()
+        self.fc1 = nn.Linear(1280, latent_dim*3)
+        self.fc2 = nn.Linear(latent_dim*3, latent_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
