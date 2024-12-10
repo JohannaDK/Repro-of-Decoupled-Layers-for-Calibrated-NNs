@@ -1,0 +1,10 @@
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=0-epoch=32-valid_loss=0.717-model_name=VTST_CIFAR10_Z32_seed0.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=1-epoch=23-valid_loss=0.731-model_name=VTST_CIFAR10_Z32_seed1.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=2-epoch=33-valid_loss=0.720-model_name=VTST_CIFAR10_Z32_seed2.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=3-epoch=36-valid_loss=0.730-model_name=VTST_CIFAR10_Z32_seed3.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=4-epoch=27-valid_loss=0.729-model_name=VTST_CIFAR10_Z32_seed4.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=5-epoch=31-valid_loss=0.721-model_name=VTST_CIFAR10_Z32_seed5.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=6-epoch=31-valid_loss=0.734-model_name=VTST_CIFAR10_Z32_seed6.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=7-epoch=27-valid_loss=0.725-model_name=VTST_CIFAR10_Z32_seed7.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=8-epoch=35-valid_loss=0.727-model_name=VTST_CIFAR10_Z32_seed8.ckpt
+experiment_results/CIFAR10_VTST_ResNet50/checkpoints/seed=9-epoch=34-valid_loss=0.734-model_name=VTST_CIFAR10_Z32_seed9.ckpt
