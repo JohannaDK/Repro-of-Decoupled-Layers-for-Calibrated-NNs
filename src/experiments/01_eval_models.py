@@ -88,7 +88,7 @@ for model_path in model_paths.read().splitlines():
         results[model_name]['Train nll'] = nll_value
 
     if not in_done:
-        ece_calc, mce_calc, acc, nll_value, brier_score, OOD_y_preds_logits, OOD_labels = eval_test_data(model, dataset=dataset, batch_size=batch_size, device=device, num_samples=args.num_samples)
+        ece_calc, mce_calc, acc, nll_value, brier_score, OOD_y_preds_logits, OOD_labels = eval_test_data(model, dataset=dataset, batch_size=batch_size, device=device, num_models=num_models, model_name=args.model_name_file, num_samples=args.num_samples)
         results[model_name]['clean_accuracy'] = acc.to("cpu").numpy().tolist()
         results[model_name]['ECE'] = ece_calc.to("cpu").numpy().tolist()*100
         results[model_name]['MCE'] = mce_calc.to("cpu").numpy().tolist()*100
@@ -96,7 +96,7 @@ for model_path in model_paths.read().splitlines():
         results[model_name]['brier'] = brier_score
 
     if not shift_done:
-        ece_calc, mce_calc, acc, corruption_ece_dict, corruption_mce_dict = eval_shift_data(model, dataset=dataset, batch_size=batch_size, device=device, num_samples=args.num_samples)
+        ece_calc, mce_calc, acc, corruption_ece_dict, corruption_mce_dict = eval_shift_data(model, dataset=dataset, batch_size=batch_size, device=device, num_models=num_models, model_name=args.model_name_file, num_samples=args.num_samples)
         results[model_name]['SHIFT ECE'] = ece_calc.to("cpu").numpy().tolist()*100
         results[model_name]['SHIFT MCE'] = mce_calc.to("cpu").numpy().tolist()*100
         results[model_name]['SHIFT ACCURACY'] = acc.to("cpu").numpy().tolist()
