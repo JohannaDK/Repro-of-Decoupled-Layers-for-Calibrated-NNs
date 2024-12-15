@@ -7,7 +7,7 @@ This project extends on the paper [Decoupling Feature Extraction and Classificat
 - Added a ViT architecture and integrated Tiny ImageNet dataset
 - Added different TST and V-TST MLP heads
 - Added training with multiple samples
-- Added a ResNet-50 architecture
+- Added a ResNet-50 and EfficientNet-B5 architectures
 - Added [Focal Loss](https://arxiv.org/abs/1708.02002) and [Adaptive Focal Loss](https://github.com/torrvision/focal_calibration/tree/main) 
 
 ## Datasets

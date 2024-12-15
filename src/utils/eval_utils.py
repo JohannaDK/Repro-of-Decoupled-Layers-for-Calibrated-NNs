@@ -10,6 +10,8 @@ import torch.nn as nn
 import torch
 from src.utils.metrics import *
 from data.tinyimagenet import *
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 SVHN_ROTATIONS = [10., 45., 90., 135., 180.]
 CORRUPTIONS = [
@@ -50,43 +52,70 @@ def eval_train_data(model, dataset, batch_size, device, num_samples=1):
     nll_value = nll(y_preds, y_targets) 
     return nll_value
 
-def eval_test_data(model, dataset, batch_size, device, num_samples=1):
+def eval_test_data(model, dataset, batch_size, device, num_models, model_name, num_samples=1):
+    """
+    Evaluate a model on both in-distribution and OOD data, compute calibration metrics, 
+    and save ECE plots for both in-distribution and OOD data.
+    """
+    print(num_models)
+    # Prepare dataset and metrics
     test_dataset, num_classes, _, _ = get_dataset(dataset)
     test_dataloader = DataLoader(test_dataset, batch_size=batch_size)
-    accuracy = Accuracy(task="multiclass", num_classes=num_classes)
-    accuracy = accuracy.to(device)
-    ece = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='l1')
-    mce = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='max')
-    ece = ece.to(device)
-    mce = mce.to(device)
+
+    accuracy = Accuracy(task="multiclass", num_classes=num_classes).to(device)
+    ece = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='l1').to(device)
+    mce = MulticlassCalibrationError(num_classes=num_classes, n_bins=10, norm='max').to(device)
+
     y_preds = []
     y_targets = []
     OOD_labels = []
     OOD_y_preds_logits = []
+
+    # Evaluate on dataset
     with torch.no_grad():
-        for j, (images, labels) in enumerate(test_dataloader):
+        for images, labels in test_dataloader:
             images = images.to(device)
             labels = labels.to(device)
+            
+            # Model predictions
             if num_samples == 1:
                 preds = model(images)
                 probs = nn.functional.softmax(preds, dim=1)
             else:
                 probs = model.forward_multisample(images, num_samples=num_samples)
-            acc = accuracy(probs, labels)
+            
+            # Update metrics
+            accuracy.update(probs, labels)
             ece.update(probs, labels)
             mce.update(probs, labels)
             y_targets.append(labels)
             y_preds.append(probs)
-            max_predictions = torch.max(probs.data, 1).values
+            
+            # For OOD data
+            max_predictions = torch.max(probs, dim=1).values
             OOD_y_preds_logits.append(max_predictions)
-            OOD_labels.append(torch.tensor([1]*len(labels)))
+            OOD_labels.append(torch.tensor([1] * len(labels), device=device))
+    
+    # Concatenate results
     y_preds = torch.cat(y_preds, dim=0)
     y_targets = torch.cat(y_targets, dim=0)
+
+    # Final metric calculations
     ece_calc = ece.compute()
     mce_calc = mce.compute()
     acc = accuracy.compute()
-    nll_value = nll(y_preds, y_targets) 
-    brier_score = brier(y_preds, y_targets)
+    nll_value = nll(y_preds, y_targets)  # Define nll function elsewhere
+    brier_score = brier(y_preds, y_targets)  # Define brier function elsewhere
+
+    # Create evaluation_results directory if it doesn't exist
+    output_dir = os.path.join(os.path.dirname(__file__), "../evaluation_results")
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save tensors to a file
+    model_name = model_name.rsplit('.',1)[0]
+    save_path = f"{output_dir}/ECE_Plot_{model_name}_{num_models}_In-Distribution.pt"  # .pt is a common extension for PyTorch files
+    torch.save({'y_preds': y_preds, 'y_true': y_targets}, save_path)
+
     return ece_calc, mce_calc, acc, nll_value, brier_score, OOD_y_preds_logits, OOD_labels
 
 def get_dataset(dataset, train=False):
@@ -120,7 +149,7 @@ def get_dataset(dataset, train=False):
         num_classes=200
     return dataset, num_classes, n_samples, input_shape
 
-def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
+def eval_shift_data(model, dataset, batch_size, device, num_models, model_name, num_samples=1):
     if dataset == "SVHN":
         shift_dataset, num_classes, _, _ = get_dataset(dataset)
         shift_dataloader = DataLoader(shift_dataset, batch_size=batch_size)
@@ -146,6 +175,11 @@ def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
     mce_overall = mce_overall.to(device)
     corruption_ece_dict = {}
     corruption_mce_dict = {}
+
+    # Track results for plots
+    y_preds = []
+    y_targets = []
+
     if dataset == "SVHN":
         with torch.no_grad():
             for i, rotation in enumerate(SVHN_ROTATIONS):
@@ -195,6 +229,8 @@ def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
                         acc = accuracy(probs, labels)
                         ece_overall.update(probs, labels)
                         mce_overall.update(probs, labels)
+                        y_targets.append(labels)
+                        y_preds.append(probs)
                         ece_corruption.update(probs, labels)
                         mce_corruption.update(probs, labels)
                 ece_corruption_calc = ece_corruption.compute()
@@ -250,6 +286,18 @@ def eval_shift_data(model, dataset, batch_size, device, num_samples=1):
     ece_overall_calc = ece_overall.compute()
     mce_overall_calc = mce_overall.compute()
 
+    y_preds = torch.cat(y_preds, dim=0)
+    y_targets = torch.cat(y_targets, dim=0)
+
+    # Create evaluation_results directory if it doesn't exist
+    output_dir = os.path.join(os.path.dirname(__file__), "../evaluation_results")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Save tensors to a file
+    model_name = model_name.rsplit('.',1)[0]
+    save_path = f"{output_dir}/ECE_Plot_{model_name}_{num_models}_SHIFT.pt"  # .pt is a common extension for PyTorch files
+    torch.save({'y_preds': y_preds, 'y_true': y_targets}, save_path)
+
     return ece_overall_calc, mce_overall_calc, acc, corruption_ece_dict, corruption_mce_dict
 
 def eval_ood_data(model, dataset, batch_size, device, OOD_y_preds_logits, OOD_labels, num_samples=1):
@@ -268,7 +316,7 @@ def eval_ood_data(model, dataset, batch_size, device, OOD_y_preds_logits, OOD_la
                     probs = model.forward_multisample(images, num_samples=num_samples)
                 max_predictions = torch.max(probs.data, 1).values
                 OOD_y_preds_logits.append(max_predictions)
-                OOD_labels.append(torch.tensor([0]*len(labels)))
+                OOD_labels.append(torch.tensor([0]*len(labels), device=device))
 
     OOD_labels = torch.cat(OOD_labels)
     OOD_y_preds_logits = torch.cat(OOD_y_preds_logits)

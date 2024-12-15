@@ -1,0 +1,10 @@
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=0-epoch=00-valid_loss=0.733-model_name=TST_CIFAR10_Z128_new_seed0.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=1-epoch=00-valid_loss=0.749-model_name=TST_CIFAR10_Z128_new_seed1.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=2-epoch=00-valid_loss=0.749-model_name=TST_CIFAR10_Z128_new_seed2.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=3-epoch=30-valid_loss=0.754-model_name=TST_CIFAR10_Z128_new_seed3.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=4-epoch=00-valid_loss=0.740-model_name=TST_CIFAR10_Z128_new_seed4.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=5-epoch=00-valid_loss=0.747-model_name=TST_CIFAR10_Z128_new_seed5.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=6-epoch=00-valid_loss=0.747-model_name=TST_CIFAR10_Z128_new_seed6.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=7-epoch=00-valid_loss=0.750-model_name=TST_CIFAR10_Z128_new_seed7.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=8-epoch=00-valid_loss=0.746-model_name=TST_CIFAR10_Z128_new_seed8.ckpt
+experiment_results/CIFAR10_TST_EfficientNet/checkpoints/seed=9-epoch=00-valid_loss=0.742-model_name=TST_CIFAR10_Z128_new_seed9.ckpt
