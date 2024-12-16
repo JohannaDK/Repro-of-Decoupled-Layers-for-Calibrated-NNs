@@ -25,7 +25,7 @@ We did the following experiments:
     - **Focal Loss:**  Run the experiments of Table 1 and 2 with Focal Loss and Adaptive Focal Loss to see how the TST and V-TST techniques perform in combination with another implicit regularization method for calibration.
 
 ## Conclusions
-TBD
+We showed that the methods suggested by Jordahn and Olmos improves calibration independently of the architecture of the model. However, we were unable to replicate the results fully for WRN trained on CIFAR100. The choice of latent variable for the MLP head in the second stage can affect the results greatly though and should be considered carefully along with the number of layers used. However, increasing the number of MC samples during training was not found to have a positive impact on calibration. Combining their method with focal loss did not improve calibration in all cases, however, calibration can be improved further by using focal loss to train the base model which is used in combination with a CE loss in the second stage of training. 
 
 ## Getting started
 To get started follow the instructions of [the original authors](https://github.com/MJordahn/Decoupled-Layers-for-Calibrated-NNs), and if you want to run our additional experiments use the following arguments as shown below.
