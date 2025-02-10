@@ -1,7 +1,7 @@
 # A Replication Study of Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks
 
 ## Overview
-This project extends on the paper [Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks](https://github.com/MJordahn/Decoupled-Layers-for-Calibrated-NNs). We aimed to reproduce the main experiments of the paper "Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks" by Jordahn and Olmos, and extended the code base in the following way:
+This project replicates and extends the paper [Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks](https://github.com/MJordahn/Decoupled-Layers-for-Calibrated-NNs). We to reproduced the main experiments of the paper "Decoupling Feature Extraction and Classification Layers for Calibrated Neural Networks" by Jordahn and Olmos, and extended the code base in the following way:
 
 - Added a simple CNN architecture
 - Added a ViT architecture and integrated Tiny ImageNet dataset
